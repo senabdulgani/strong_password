@@ -1,40 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:strong_password/View/component/input_sheet.dart';
-import 'package:strong_password/common/color_constants.dart';
-import 'package:strong_password/models/password_model.dart';
+import 'package:strong_password/models/Hive/boxes.dart';
+import 'package:strong_password/models/Hive/password.dart';
 
-class AddActionButton extends StatelessWidget {
-  const AddActionButton({
+
+class BottomSheetComponent extends StatelessWidget {
+  const BottomSheetComponent({
     super.key,
-    required this.passwordList,
+    required this.nameController,
+    required this.passwordController,
   });
 
-  final List<PasswordModel> passwordList;
+  final TextEditingController nameController;
+  final TextEditingController passwordController;
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(56)),
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(
+            20.0, 20.0, 20.0, MediaQuery.of(context).viewInsets.bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            const Text(
+              'Fill out the form',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20.0),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            TextField(
+              controller: passwordController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                if (nameController.text.isNotEmpty &&
+                    passwordController.text.isNotEmpty) {
+                  boxPasswords.put(
+                      'key_$nameController',
+                      Password(
+                          name: nameController.text,
+                          password: passwordController.text));
+                  Navigator.pop(context);
+                  nameController.clear();
+                  passwordController.clear();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please fill out both fields.'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        ),
       ),
-      // todo Yuvarlak yap.
-      backgroundColor: AppColors.primaryColor,
-      onPressed: () {
-        addPassword(context);
-      },
-      child: const Icon(Icons.add),
     );
-  }
-
-  addPassword(BuildContext context) {
-    return showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (BuildContext context) {
-              return SingleChildScrollView(
-                child: InputBottomSheet(passwordList: passwordList),
-              );
-            },
-          );
   }
 }

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:strong_password/View/pages/home_page.dart';
+import 'package:strong_password/models/Hive/boxes.dart';
+import 'package:strong_password/models/Hive/password.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(PasswordAdapter());
+  boxPasswords = await Hive.openBox<Password>('passwordsBox');
   runApp(MyApp());
 }
 
