@@ -2,16 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:strong_password/models/Hive/boxes.dart';
 import 'package:strong_password/models/Hive/password.dart';
 
-
-class BottomSheetComponent extends StatelessWidget {
+class BottomSheetComponent extends StatefulWidget {
   const BottomSheetComponent({
-    super.key,
+    super.key, 
     required this.nameController,
     required this.passwordController,
+    required this.index,
   });
 
   final TextEditingController nameController;
   final TextEditingController passwordController;
+  final int index;
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _BottomSheetComponentState createState() => _BottomSheetComponentState();
+}
+
+class _BottomSheetComponentState extends State<BottomSheetComponent> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -31,42 +40,38 @@ class BottomSheetComponent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20.0),
-            TextField(
-              controller: nameController,
+            TextFormField(
+              controller: widget.nameController,
               decoration: const InputDecoration(
                 labelText: 'Name',
                 border: OutlineInputBorder(),
               ),
+              onChanged: (value) {
+                value = widget.nameController.text;
+              },
             ),
             const SizedBox(height: 10.0),
-            TextField(
-              controller: passwordController,
+            TextFormField(
+              controller: widget.passwordController,
               decoration: const InputDecoration(
-                labelText: 'Email',
+                labelText: 'Password',
                 border: OutlineInputBorder(),
               ),
+              onChanged: (value) {
+                value = widget.passwordController.text;
+              },
             ),
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                if (nameController.text.isNotEmpty &&
-                    passwordController.text.isNotEmpty) {
                   boxPasswords.put(
-                      'key_$nameController',
-                      Password(
-                          name: nameController.text,
-                          password: passwordController.text));
-                  Navigator.pop(context);
-                  nameController.clear();
-                  passwordController.clear();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please fill out both fields.'),
-                    ),
-                  );
-                }
-              },
+                  'key_${widget.index.toString()}',
+                  Password(
+                    name: widget.nameController.text,
+                    password: widget.passwordController.text,
+                  ),
+                ).then((value) => Navigator.pop(context));
+                },
               child: const Text('Submit'),
             ),
           ],

@@ -10,5 +10,8 @@ class Password {
   @HiveField(1)
   String password;
 
-  Password({required this.name, required this.password});
+  @HiveField(2)
+  DateTime? createdAt;
+
+  Password({required this.name, required this.password, this.createdAt});
 }

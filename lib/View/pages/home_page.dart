@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:strong_password/View/component/add_password_button.dart';
+import 'package:strong_password/View/component/costum_app_bar.dart';
 import 'package:strong_password/View/component/search_bar.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/common/text_styles.dart';
@@ -14,48 +14,52 @@ class StrongPassword extends StatefulWidget {
 }
 
 class _StrongPasswordState extends State<StrongPassword> {
-
-   
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
+  
+  List<TextEditingController> controllers = [];
+  final String title = 'Passwords';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        title: const Text('My Passwords'),
-        centerTitle: true,
-        backgroundColor: AppColors.primaryColor,
-      ),
+      appBar: costumAppBar(title: title, color: AppColors.primaryColor),
       body: ListView(
         children: [
           const SearchPassword(),
           ListView.builder(
-            shrinkWrap: true,
             itemCount: boxPasswords.length,
+            shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
               Password password = boxPasswords.getAt(index);
+              TextEditingController nameController =
+                  TextEditingController(text: password.name);
+              TextEditingController passwordController =
+                  TextEditingController(text: password.password);
               return ListTile(
                 tileColor: Colors.grey.shade700,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 title: Text(password.name, style: ProjectTextStyles.title),
-                subtitle: Text('•' * password.password.toString().length,
-                    style: ProjectTextStyles.password),
+                subtitle: Text(
+                  '•' * password.password.toString().length,
+                  style: ProjectTextStyles.password,
+                ),
                 leading: CircleAvatar(
                   backgroundColor: AppColors.primaryColor,
                   child: const Icon(Icons.lock),
                 ),
                 onTap: () {
-                  // todo: Password detail page
-                  
+                  showPasswordEditBottomSheet(
+                    context,
+                    nameController: nameController,
+                    passwordController: passwordController,
+                    index: index,
+                  ).then((value) => setState(() {}));
                 },
                 trailing: SizedBox(
                   width: 220,
                   child: Row(
                     children: [
-                      const SizedBox(width: 100),
+                      const SizedBox(width: 90),
                       IconButton(
                         onPressed: () {
                           setState(() {
@@ -81,12 +85,15 @@ class _StrongPasswordState extends State<StrongPassword> {
         // todo Yuvarlak yap.
         backgroundColor: AppColors.primaryColor,
         onPressed: () {
-          showModalBottomSheet(context: context, builder: (context) {
-          return BottomSheetComponent(
+          // Yeni bir controller oluşturarak alt sayfayı gösterin
+          TextEditingController nameController = TextEditingController();
+          TextEditingController passwordController = TextEditingController();
+          showPasswordEditBottomSheet(
+            context,
             nameController: nameController,
             passwordController: passwordController,
-          );
-        }).then((value) => setState(() {}));
+            index: 0,
+          ).then((value) => setState(() {}));
         },
         child: const Icon(Icons.add),
       ),
