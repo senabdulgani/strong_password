@@ -92,7 +92,9 @@ class _StrongPasswordState extends State<StrongPassword> {
             context,
             nameController: nameController,
             passwordController: passwordController,
-            index: 0,
+            index: boxPasswords.length, 
+            // TODO:  Burada bir düzenleme gerekiyor
+            // todo yeni bir şifre eklenirken neye göre eklenecek
           ).then((value) => setState(() {}));
         },
         child: const Icon(Icons.add),
