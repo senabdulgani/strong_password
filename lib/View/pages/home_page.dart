@@ -46,7 +46,7 @@ class _StrongPasswordState extends State<StrongPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: costumAppBar(title: title, color: AppColors.primaryColor),
+      appBar: costumAppBar(title: title, color: AppColors.componentColor, context: context),
       body: ListView(
         children: [
           SearchPassword(onSearch: onSearch),

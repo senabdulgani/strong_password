@@ -1,14 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:strong_password/View/component/add_password_bottom_sheet.dart';
+import 'package:strong_password/View/component/password_generator.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/common/text_styles.dart';
 import 'package:strong_password/models/Hive/password.dart';
 
-costumAppBar({required String title, required Color color}) {
+costumAppBar(
+    {required String title,
+    required Color color,
+    required BuildContext context}) {
   return AppBar(
     title: Text(title),
     centerTitle: true,
     backgroundColor: color,
+    actions: [
+      Padding(
+        padding: const EdgeInsets.only(right: 10.0),
+        child: IconButton(
+          onPressed: () {
+            // showPasswordGenerator(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return TabBarExample();
+            }));
+          },
+          icon: const Icon(Icons.password),
+        ),
+      ),
+    ],
   );
 }
 
@@ -55,3 +73,14 @@ Future showPasswordEditBottomSheet(
         );
       });
 }
+
+// Future<dynamic> showPasswordGenerator(
+//   BuildContext context,
+// ) {
+//   return showModalBottomSheet(
+//       context: context,
+//       isScrollControlled: true,
+//       builder: (context) {
+//         return null;
+//       });
+// }

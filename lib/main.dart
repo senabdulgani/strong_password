@@ -38,13 +38,13 @@ class MyApp extends StatelessWidget {
     final ThemeData themeData = ThemeData(
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.blue,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(
-                20,
-              ),
-            ),
-          ),
+          // shape: RoundedRectangleBorder(
+          //   borderRadius: BorderRadius.vertical(
+          //     bottom: Radius.circular(
+          //       20,
+          //     ),
+          //   ),
+          // ),
         ),
         useMaterial3: true,
         brightness: isDark ? Brightness.dark : Brightness.light);
