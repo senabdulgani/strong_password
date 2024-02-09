@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:strong_password/View/component/add_password_bottom_sheet.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/common/text_styles.dart';
+import 'package:strong_password/models/Hive/password.dart';
 
 costumAppBar({required String title, required Color color}) {
   return AppBar(
@@ -38,8 +39,9 @@ Future showPasswordEditBottomSheet(
   BuildContext context, {
   required TextEditingController nameController,
   required TextEditingController passwordController,
-  bool isUpdate = false,
+  required bool isUpdate,
   required int index,
+  required List<Password> filteredPasswords,
 }) {
   return showModalBottomSheet(
       context: context,
@@ -48,6 +50,8 @@ Future showPasswordEditBottomSheet(
           nameController: nameController,
           passwordController: passwordController,
           index: index,
+          filteredPasswords: filteredPasswords,
+          isUpdate: isUpdate,
         );
       });
 }

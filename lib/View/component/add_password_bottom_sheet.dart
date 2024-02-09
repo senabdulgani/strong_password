@@ -4,15 +4,19 @@ import 'package:strong_password/models/Hive/password.dart';
 
 class BottomSheetComponent extends StatefulWidget {
   const BottomSheetComponent({
-    super.key, 
+    super.key,
     required this.nameController,
     required this.passwordController,
     required this.index,
+    required this.filteredPasswords,
+    required this.isUpdate,
   });
 
   final TextEditingController nameController;
   final TextEditingController passwordController;
+  final List<Password> filteredPasswords;
   final int index;
+  final bool isUpdate;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -20,8 +24,6 @@ class BottomSheetComponent extends StatefulWidget {
 }
 
 class _BottomSheetComponentState extends State<BottomSheetComponent> {
-
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -64,14 +66,39 @@ class _BottomSheetComponentState extends State<BottomSheetComponent> {
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                  boxPasswords.put(
-                  'key_${widget.index.toString()}',
-                  Password(
+                if (widget.isUpdate) {
+                  widget.filteredPasswords[widget.index - 1] = Password(
                     name: widget.nameController.text,
                     password: widget.passwordController.text,
-                  ),
-                ).then((value) => Navigator.pop(context));
-                },
+                  );
+                  boxPasswords
+                      .put(
+                        'key_${widget.index.toString()}',
+                        Password(
+                          name: widget.nameController.text,
+                          password: widget.passwordController.text,
+                        ),
+                      )
+                      .then((value) => Navigator.pop(context));
+                } else {
+                  // * isUpdate = false
+                  widget.filteredPasswords.add(
+                    Password(
+                      name: widget.nameController.text,
+                      password: widget.passwordController.text,
+                    ),
+                  );
+                  boxPasswords
+                      .put(
+                        'key_${widget.index.toString()}',
+                        Password(
+                          name: widget.nameController.text,
+                          password: widget.passwordController.text,
+                        ),
+                      )
+                      .then((value) => Navigator.pop(context));
+                }
+              },
               child: const Text('Submit'),
             ),
           ],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:strong_password/View/pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:strong_password/View/pages/check_password_page.dart';
+import 'package:strong_password/View/pages/detect_password_view.dart';
 import 'package:strong_password/models/Hive/boxes.dart';
 import 'package:strong_password/models/Hive/password.dart';
 
@@ -8,13 +10,27 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PasswordAdapter());
   boxPasswords = await Hive.openBox<Password>('passwordsBox');
-  runApp(MyApp());
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isFirstLogin = prefs.getBool('firstLogin') ?? true;
+  String? appPassword = prefs.getString('appPassword') ;
+
+  runApp(MyApp(
+    isFirstLogin: isFirstLogin,
+    appPassword: appPassword,
+  ));
 }
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  MyApp({
+    super.key,
+    required this.isFirstLogin,
+    required this.appPassword,
+  });
 
+  final bool isFirstLogin;
+  final String? appPassword;
   bool isDark = false;
 
   @override
@@ -36,7 +52,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Strong Password',
       theme: themeData,
-      home: const StrongPassword(),
+      home: appPassword == null ? const DetectPassword() : const CheckPassword(),
     );
   }
 }

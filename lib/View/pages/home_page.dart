@@ -14,9 +14,33 @@ class StrongPassword extends StatefulWidget {
 }
 
 class _StrongPasswordState extends State<StrongPassword> {
-  
-  List<TextEditingController> controllers = [];
   final String title = 'Passwords';
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredPasswords = boxPasswords.values.toList() as List<Password>;
+  }
+
+  bool isCancelActive = false;
+  List<Password> _filteredPasswords = [];
+
+  void onSearch(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _filteredPasswords = boxPasswords.values.toList() as List<Password>;
+      });
+    } else {
+      setState(() {
+        _filteredPasswords = boxPasswords
+          .toMap()
+          .values
+          .where((password) =>
+              password.name.toLowerCase().contains(query.toLowerCase()))
+          .toList() as List<Password>;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,56 +49,62 @@ class _StrongPasswordState extends State<StrongPassword> {
       appBar: costumAppBar(title: title, color: AppColors.primaryColor),
       body: ListView(
         children: [
-          const SearchPassword(),
-          ListView.builder(
-            itemCount: boxPasswords.length,
-            shrinkWrap: true,
-            itemBuilder: (BuildContext context, int index) {
-              Password password = boxPasswords.getAt(index);
-              TextEditingController nameController =
-                  TextEditingController(text: password.name);
-              TextEditingController passwordController =
-                  TextEditingController(text: password.password);
-              return ListTile(
-                tileColor: Colors.grey.shade700,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                title: Text(password.name, style: ProjectTextStyles.title),
-                subtitle: Text(
-                  '•' * password.password.toString().length,
-                  style: ProjectTextStyles.password,
-                ),
-                leading: CircleAvatar(
-                  backgroundColor: AppColors.primaryColor,
-                  child: const Icon(Icons.lock),
-                ),
-                onTap: () {
-                  showPasswordEditBottomSheet(
-                    context,
-                    nameController: nameController,
-                    passwordController: passwordController,
-                    index: index,
-                  ).then((value) => setState(() {}));
-                },
-                trailing: SizedBox(
-                  width: 220,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 90),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            boxPasswords.deleteAt(index);
-                          });
-                        },
-                        icon: const Icon(Icons.delete),
-                        color: Colors.red,
-                      ),
-                      Text('15.04', style: ProjectTextStyles.date),
-                    ],
+          SearchPassword(onSearch: onSearch),
+          SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: ListView.builder(
+              itemCount: _filteredPasswords.length,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                Password password = _filteredPasswords[index];
+                TextEditingController nameController =
+                    TextEditingController(text: password.name);
+                TextEditingController passwordController =
+                    TextEditingController(text: password.password);
+                return ListTile(
+                  tileColor: Colors.grey.shade700,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  title: Text(password.name, style: ProjectTextStyles.title),
+                  subtitle: Text(
+                    '•' * password.password.toString().length,
+                    style: ProjectTextStyles.password,
                   ),
-                ),
-              );
-            },
+                  leading: CircleAvatar(
+                    backgroundColor: AppColors.primaryColor,
+                    child: const Icon(Icons.lock),
+                  ),
+                  onTap: () {
+                    showPasswordEditBottomSheet(
+                      context,
+                      nameController: nameController,
+                      passwordController: passwordController,
+                      isUpdate: true,
+                      index: _filteredPasswords.length,
+                      filteredPasswords: _filteredPasswords,
+                    ).then((value) => setState(() {}));
+                  },
+                  trailing: SizedBox(
+                    width: 220,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 90),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              boxPasswords.deleteAt(index);
+                              _filteredPasswords.removeAt(index);
+                            });
+                          },
+                          icon: const Icon(Icons.delete),
+                          color: Colors.red,
+                        ),
+                        Text('15.04', style: ProjectTextStyles.date),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -92,9 +122,9 @@ class _StrongPasswordState extends State<StrongPassword> {
             context,
             nameController: nameController,
             passwordController: passwordController,
-            index: boxPasswords.length, 
-            // TODO:  Burada bir düzenleme gerekiyor
-            // todo yeni bir şifre eklenirken neye göre eklenecek
+            index: _filteredPasswords.length,
+            filteredPasswords: _filteredPasswords,
+            isUpdate: false,
           ).then((value) => setState(() {}));
         },
         child: const Icon(Icons.add),
