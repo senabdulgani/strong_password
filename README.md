@@ -1,16 +1,20 @@
 # strong_password
 
-A new Flutter project.
+An open source startup application that allows the user to perform various actions regarding their passwords.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This application allows users to easily manage their passwords.
+This project developed using Flutter framework and their open source library.
 
-A few resources to get you started if this is your first Flutter project:
+This project allows to do the following:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+-Easily password displaying.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+-Generating stronger passwords for accounts. 
+
+-Sync between desktop and mobile (soon).
+
+-Scanning and displaying credit cards,
+
+##### All these features can be easily accessed through a simple interface.
