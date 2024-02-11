@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:strong_password/common/color_constants.dart';
 
 // ignore: must_be_immutable
-class TabBarExample extends StatefulWidget {
-  const TabBarExample({super.key});
+class PasswordGeneratorView extends StatefulWidget {
+  const PasswordGeneratorView({super.key});
 
   @override
-  State<TabBarExample> createState() => _TabBarExampleState();
+  State<PasswordGeneratorView> createState() => _PasswordGeneratorViewState();
 }
 
-class _TabBarExampleState extends State<TabBarExample> {
+class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
   int lengthValue = 12;
 
   String? generatedPassword;
@@ -124,10 +124,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                         });
                       },
                     ),
-                    Divider(
-                      color: Colors.grey.shade200,
-                      thickness: 1,
-                    ),
+                    const CostumDivider(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -219,6 +216,20 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
 
     return password;
+  }
+}
+
+class CostumDivider extends StatelessWidget {
+  const CostumDivider({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      color: Colors.grey.shade200,
+      thickness: 1,
+    );
   }
 }
 
@@ -400,11 +411,13 @@ class CircleButtonLarge extends StatefulWidget {
     required this.onPressed,
     required this.iconData,
     required this.text,
+    this.iconColor,
   });
 
   final Function() onPressed;
   final IconData iconData;
   final String text;
+  final Color? iconColor;
 
   @override
   State<CircleButtonLarge> createState() => _CircleButtonLargeState();
@@ -429,7 +442,7 @@ class _CircleButtonLargeState extends State<CircleButtonLarge> {
               icon: Icon(
                 widget.iconData,
                 size: 28,
-                color: Colors.black87,
+                color: widget.iconColor ?? Colors.black87,
               ),
             ),
           ),

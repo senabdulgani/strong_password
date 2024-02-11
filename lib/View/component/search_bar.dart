@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:strong_password/common/color_constants.dart';
 
 // ignore: must_be_immutable
 class SearchPassword extends StatelessWidget {
@@ -27,7 +28,7 @@ class SearchPassword extends StatelessWidget {
                     maxHeight: 40,
                   ),
                   surfaceTintColor:
-                      MaterialStateColor.resolveWith((states) => Colors.orange),
+                      MaterialStateColor.resolveWith((states) => AppColors.componentColor),
                   trailing: const <Widget>[
                     // AnimatedCrossFade(
                     //   firstChild: IconButton(

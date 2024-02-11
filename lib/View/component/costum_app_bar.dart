@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:strong_password/View/component/add_password_bottom_sheet.dart';
-import 'package:strong_password/View/component/password_generator.dart';
+import 'package:strong_password/View/pages/password_generator.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/common/text_styles.dart';
 import 'package:strong_password/models/Hive/password.dart';
@@ -20,7 +20,7 @@ costumAppBar(
           onPressed: () {
             // showPasswordGenerator(context);
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return TabBarExample();
+              return const PasswordGeneratorView();
             }));
           },
           icon: const Icon(Icons.password),

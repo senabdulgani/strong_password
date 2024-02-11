@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:strong_password/View/component/costum_button.dart';
 import 'package:strong_password/View/pages/home_page.dart';
 
 class DetectPassword extends StatefulWidget {
@@ -15,7 +16,9 @@ class _DetectPasswordState extends State<DetectPassword> {
       TextEditingController();
   String _detectedPassword = '';
 
-  void setFirstLogin() async {
+  bool isVisible = false;
+
+  void setFirstLoginFalse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('firstLogin', false);
   }
@@ -49,7 +52,7 @@ class _DetectPasswordState extends State<DetectPassword> {
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const StrongPassword()));
-              // Belli koşullar sağlanamazsa buradan ileri gidememeli.
+          // Belli koşullar sağlanamazsa buradan ileri gidememeli.
         },
         child: const Icon(Icons.arrow_forward),
       ),
@@ -58,46 +61,115 @@ class _DetectPasswordState extends State<DetectPassword> {
         child: Column(
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-            const Text(
-              'Detect Password',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Text(
+                  'Detect\nPassword...',
+                  textAlign: TextAlign.left,
+                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 48,
+                      ),
+                ),
+                const Spacer()
+              ],
             ),
             const SizedBox(height: 20),
-            TextFormField(
+            CostumTextField(
               controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
+              isVisible: isVisible,
+              labelText: 'Password',
             ),
-            const SizedBox(height: 10),
-            TextFormField(
+            const SizedBox(height: 12),
+            CostumTextField(
               controller: _confirmPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Confirm Password',
-                border: OutlineInputBorder(),
-              ),
+              isVisible: isVisible,
+              labelText: 'Confirm Password',
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _detectPassword,
-              child: const Text('Detect Password'),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              _detectedPassword,
-              style: TextStyle(
-                color: _detectedPassword == 'Passwords do not match!'
-                    ? Colors.red
-                    : Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            CostumButton(onPressed: () {
+              _detectPassword();
+              setFirstLoginFalse();
+            }, buttonText: 'Sign In'),
           ],
         ),
       ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class CostumTextField extends StatefulWidget {
+  CostumTextField({
+    super.key,
+    required this.controller,
+    required this.isVisible,
+    required this.labelText,
+  });
+
+  final TextEditingController controller;
+  bool isVisible;
+  final String labelText;
+
+  @override
+  State<CostumTextField> createState() => _CostumTextFieldState();
+}
+
+class _CostumTextFieldState extends State<CostumTextField> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        TextField(
+          cursorColor: Colors.black,
+          onEditingComplete: () {},
+          textInputAction: TextInputAction.done,
+          controller: widget.controller,
+          obscureText: widget.isVisible,
+          decoration: InputDecoration(
+            floatingLabelStyle: const TextStyle(
+              color: Colors.black,
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            disabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            border: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            labelText: widget.labelText,
+          ),
+        ),
+        Positioned(
+                  right: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      onPressed: () {
+                        if (widget.controller.text.isNotEmpty) {
+                          setState(() {
+                            widget.isVisible = !widget.isVisible;
+                          });
+                        } else {
+                          return;
+                        }
+                      },
+                      icon: Icon(widget.isVisible
+                          ? Icons.visibility_off_rounded
+                          : Icons.remove_red_eye_rounded,
+                          color: Colors.grey),
+                    ),
+                  ),
+                ),
+      ],
     );
   }
 }

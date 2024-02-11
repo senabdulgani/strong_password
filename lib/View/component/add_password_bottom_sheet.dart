@@ -67,7 +67,7 @@ class _BottomSheetComponentState extends State<BottomSheetComponent> {
             ElevatedButton(
               onPressed: () {
                 if (widget.isUpdate) {
-                  widget.filteredPasswords[widget.index - 1] = Password(
+                  widget.filteredPasswords[widget.index] = Password(
                     name: widget.nameController.text,
                     password: widget.passwordController.text,
                   );

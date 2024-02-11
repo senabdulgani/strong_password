@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:strong_password/View/component/costum_button.dart';
+import 'package:strong_password/View/pages/detect_password_view.dart';
 import 'package:strong_password/View/pages/home_page.dart';
 
 class CheckPassword extends StatefulWidget {
@@ -10,15 +12,15 @@ class CheckPassword extends StatefulWidget {
 }
 
 class _CheckPasswordState extends State<CheckPassword> {
-
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<bool> isUserSecure() async {
+  bool isVisible = false;
 
+  Future<bool> isUserSecure() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String appPassword = prefs.getString('appPassword')!;
 
-    if(appPassword == _passwordController.text){
+    if (appPassword == _passwordController.text) {
       return true;
     } else {
       return false;
@@ -32,32 +34,49 @@ class _CheckPasswordState extends State<CheckPassword> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-            const Text(
-              'Please enter your password',
-              style: TextStyle(fontSize: 20),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+            Row(
+              children: [
+                Text(
+                  'Hello...',
+                  textAlign: TextAlign.left,
+                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 56,
+                      ),
+                ),
+                const Spacer(),
+              ],
             ),
-            const SizedBox(height: 20),
-            TextField(
+            const SizedBox(height: 30),
+            CostumTextField(
               controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
+              isVisible: isVisible,
+              labelText: 'Password',
+            ), 
+            const SizedBox(height: 30),
+            CostumButton(
+              onPressed: (){
                 isUserSecure().then((value) {
-                  if(value){
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const StrongPassword()));
-                  }
-                });
+                    if (value) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const StrongPassword()));
+                    }
+                  });
               },
-              child: const Text('Enter'),
+              buttonText: 'Log In',
             ),
+            GestureDetector(
+                onTap: () {
+                // todo: I forgot my password process.
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(10),
+                    color: Colors.transparent,
+                    child: Text('Forgot Password?',
+                        style: Theme.of(context).textTheme.bodySmall))),
           ],
         ),
       ),
