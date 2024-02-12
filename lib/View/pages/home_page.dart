@@ -3,6 +3,9 @@ import 'package:credit_card_scanner/credit_card_scanner.dart';
 import 'package:strong_password/View/component/costum_app_bar.dart';
 import 'package:strong_password/View/component/search_bar.dart';
 import 'package:strong_password/View/pages/card_holder_info.dart';
+import 'package:strong_password/View/pages/check_password_page.dart';
+import 'package:strong_password/View/pages/password_generator.dart';
+import 'package:strong_password/View/pages/settings_view.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/models/boxes.dart';
 import 'package:strong_password/models/card.dart';
@@ -15,17 +18,20 @@ class StrongPassword extends StatefulWidget {
   State<StrongPassword> createState() => _StrongPasswordState();
 }
 
-class _StrongPasswordState extends State<StrongPassword> {
+class _StrongPasswordState extends State<StrongPassword>
+    with SingleTickerProviderStateMixin {
   final String title = 'Passwords';
+  late bool _isUnlocked;
 
   @override
   void initState() {
     super.initState();
     _filteredPasswords = boxPasswords.values.toList() as List<Password>;
     _filteredCreditCard = cardBox.values.toList() as List<CreditCard>;
+
+    _isUnlocked = true;
   }
 
-  bool isCancelActive = false;
   List<Password> _filteredPasswords = [];
   List<CreditCard> _filteredCreditCard = [];
 
@@ -88,12 +94,68 @@ class _StrongPasswordState extends State<StrongPassword> {
     }
   }
 
+  toggleLock() {
+    setState(() {
+      _isUnlocked = !_isUnlocked;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: costumAppBar(
-          title: title, color: Colors.transparent, context: context),
+      appBar: AppBar(
+        title: Text(title),
+        centerTitle: false,
+        backgroundColor: Colors.transparent,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const PasswordGeneratorView();
+                }));
+              },
+              icon: const Icon(Icons.password),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const SettingsPage();
+              }));
+            },
+            icon: const Icon(Icons.menu),
+          ),
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            crossFadeState: _isUnlocked
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            firstChild: IconButton(
+              onPressed: () async {
+                await toggleLock();
+                await Future.delayed(const Duration(milliseconds: 250), () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CheckPassword(),
+                    ),
+                  );
+                });
+              },
+              icon: const Icon(Icons.lock_open),
+            ),
+            secondChild: IconButton(
+              onPressed: () {
+                return;
+              },
+              icon: const Icon(Icons.lock, color: Colors.red),
+            ),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: ListView(
@@ -189,7 +251,7 @@ class _StrongPasswordState extends State<StrongPassword> {
                           password.name,
                           style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -197,7 +259,7 @@ class _StrongPasswordState extends State<StrongPassword> {
                           '•' * password.password.toString().length,
                           style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 10,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -208,20 +270,30 @@ class _StrongPasswordState extends State<StrongPassword> {
                             children: [
                               const Spacer(),
                               IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.copy),
-                                color: Colors.black,
-                              ),
-                              IconButton(
                                 onPressed: () {
                                   // setState(() {
                                   //   boxPasswords.deleteAt(index);
                                   //   _filteredPasswords.removeAt(index);
                                   // });
                                 },
-                                icon: const Icon(Icons.more_vert),
+                                icon: const Icon(Icons.copy),
                                 color: Colors.black,
                               ),
+                              // IconButton(
+                              //   onPressed: () async {},
+                              //   icon: const Icon(Icons.more_vert),
+                              //   color: Colors.black,
+                              // ),
+                              PopUpMenuButton(
+                                firstItem: () {},
+                                secondItem: () {
+                                  setState(() {
+                                    boxPasswords.deleteAt(index);
+                                    _filteredPasswords.removeAt(index);
+                                  });
+                                },
+                              ),
+
                               // IconButton(
                               //   onPressed: () {
                               //     setState(() {
@@ -409,6 +481,57 @@ class _StrongPasswordState extends State<StrongPassword> {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class PopUpMenuButton extends StatefulWidget {
+  PopUpMenuButton({
+    super.key,
+    required this.firstItem,
+    required this.secondItem,
+  });
+
+  Function() firstItem;
+  Function() secondItem;
+
+  @override
+  State<PopUpMenuButton> createState() => _PopUpMenuButtonState();
+}
+
+class _PopUpMenuButtonState extends State<PopUpMenuButton> {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<int>(
+      offset: const Offset(-20, 20),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+        const PopupMenuItem<int>(
+          value: 0,
+          child: ListTile(
+            leading: Icon(Icons.edit),
+            title: Text('Edit'),
+          ),
+        ),
+        const PopupMenuItem<int>(
+          value: 1,
+          child: ListTile(
+            leading: Icon(Icons.delete),
+            title: Text('Delete'),
+          ),
+        ),
+      ],
+      onSelected: (int value) {
+        switch (value) {
+          case 0:
+            widget.firstItem();
+            break;
+          case 1:
+            // Handle delete action
+            widget.secondItem();
+            break;
+        }
+      },
     );
   }
 }

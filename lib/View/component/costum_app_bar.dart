@@ -1,34 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:strong_password/View/component/add_password_bottom_sheet.dart';
-import 'package:strong_password/View/pages/password_generator.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/common/text_styles.dart';
 import 'package:strong_password/models/password.dart';
 
-costumAppBar(
-    {required String title,
-    required Color color,
-    required BuildContext context}) {
-  return AppBar(
-    title: Text(title),
-    centerTitle: true,
-    backgroundColor: color,
-    actions: [
-      Padding(
-        padding: const EdgeInsets.only(right: 10.0),
-        child: IconButton(
-          onPressed: () {
-            // showPasswordGenerator(context);
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const PasswordGeneratorView();
-            }));
-          },
-          icon: const Icon(Icons.password),
-        ),
-      ),
-    ],
-  );
-}
 
 void showCostumPasswordDetail(
     {required BuildContext context,

@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Strong Password',
       theme: themeData,
-      home: appPassword == null ? const DetectPassword() : const CheckPassword(),
+      home: appPassword == null ? DetectPassword() : const CheckPassword(),
     );
   }
 }

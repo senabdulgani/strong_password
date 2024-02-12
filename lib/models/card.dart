@@ -22,10 +22,14 @@ class CreditCard {
   @HiveField(5)
   String? cardName;
 
+  @HiveField(6)
+  bool? isFavorite = false;
+
   CreditCard({
     required this.cardHolder,
     required this.cardNumber,
     required this.cardExpiry,
+    this.isFavorite,
     this.cardCvv,
     this.cardIssuer,
     this.cardName,

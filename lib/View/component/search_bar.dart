@@ -29,23 +29,23 @@ class SearchPassword extends StatelessWidget {
                   ),
                   surfaceTintColor:
                       MaterialStateColor.resolveWith((states) => AppColors.componentColor),
-                  trailing: const <Widget>[
-                    // AnimatedCrossFade(
-                    //   firstChild: IconButton(
-                    //     icon: const Icon(Icons.clear, color: Colors.white),
-                    //     onPressed: () {
-                    //       controller.clear();
-                    //     },
-                    //   ),
-                    //   secondChild:
-                    //       const SizedBox(), // You can provide an empty widget or any other widget you want to show when isCancelActive is false
-                    //   crossFadeState: isCancelActive
-                    //       ? CrossFadeState.showFirst
-                    //       : CrossFadeState.showSecond,
-                    //   duration: const Duration(milliseconds: 300),
-                    // ),
-                    // Todo: I dont like animation's toward.(Edit)
-                  ],
+                  // trailing: <Widget>[
+                  //   AnimatedCrossFade(
+                  //     firstChild: IconButton(
+                  //       icon: const Icon(Icons.clear, color: Colors.white),
+                  //       onPressed: () {
+                  //         controller.clear();
+                  //       },
+                  //     ),
+                  //     secondChild:
+                  //         const SizedBox(), // You can provide an empty widget or any other widget you want to show when isCancelActive is false
+                  //     crossFadeState: isCancelActive
+                  //         ? CrossFadeState.showFirst
+                  //         : CrossFadeState.showSecond,
+                  //     duration: const Duration(milliseconds: 300),
+                  //   ),
+                  //   // Todo: I dont like animation's toward.(Edit)
+                  // ],
                   controller: controller,
                   padding: const MaterialStatePropertyAll<EdgeInsets>(
                       EdgeInsets.symmetric(horizontal: 16.0)),

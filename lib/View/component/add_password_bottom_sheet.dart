@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:strong_password/View/component/costum_button.dart';
+import 'package:strong_password/View/pages/details_password_view.dart';
+import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/models/boxes.dart';
 import 'package:strong_password/models/password.dart';
 
@@ -34,12 +38,38 @@ class _BottomSheetComponentState extends State<BottomSheetComponent> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const Text(
-              'Fill out the form',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                const Text(
+                  'Fill out the form',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.grey.shade100,
+                    ),
+                  ),
+                  onPressed: () {
+                    // go to add details page
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return const PasswordDetailsView();
+                    }));
+                  },
+                  child: Text(
+                    'Add Details',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.componentColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20.0),
             TextFormField(
@@ -64,43 +94,43 @@ class _BottomSheetComponentState extends State<BottomSheetComponent> {
               },
             ),
             const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                if (widget.isUpdate) {
-                  widget.filteredPasswords[widget.index] = Password(
-                    name: widget.nameController.text,
-                    password: widget.passwordController.text,
-                  );
-                  boxPasswords
-                      .put(
-                        'key_${widget.index.toString()}',
-                        Password(
-                          name: widget.nameController.text,
-                          password: widget.passwordController.text,
-                        ),
-                      )
-                      .then((value) => Navigator.pop(context));
-                } else {
-                  // * isUpdate = false
-                  widget.filteredPasswords.add(
-                    Password(
+            CostumButton(
+                onPressed: () {
+                  if (widget.isUpdate) {
+                    widget.filteredPasswords[widget.index] = Password(
                       name: widget.nameController.text,
                       password: widget.passwordController.text,
-                    ),
-                  );
-                  boxPasswords
-                      .put(
-                        'key_${widget.index.toString()}',
-                        Password(
-                          name: widget.nameController.text,
-                          password: widget.passwordController.text,
-                        ),
-                      )
-                      .then((value) => Navigator.pop(context));
-                }
-              },
-              child: const Text('Submit'),
-            ),
+                    );
+                    boxPasswords
+                        .put(
+                          'key_${widget.index.toString()}',
+                          Password(
+                            name: widget.nameController.text,
+                            password: widget.passwordController.text,
+                          ),
+                        )
+                        .then((value) => Navigator.pop(context));
+                  } else {
+                    // * isUpdate = false
+                    widget.filteredPasswords.add(
+                      Password(
+                        name: widget.nameController.text,
+                        password: widget.passwordController.text,
+                      ),
+                    );
+                    boxPasswords
+                        .put(
+                          'key_${widget.index.toString()}',
+                          Password(
+                            name: widget.nameController.text,
+                            password: widget.passwordController.text,
+                          ),
+                        )
+                        .then((value) => Navigator.pop(context));
+                  }
+                },
+                buttonText: 'Submit'),
+            const Gap(20.0),
           ],
         ),
       ),
