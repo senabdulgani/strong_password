@@ -3,7 +3,7 @@ import 'package:strong_password/View/component/add_password_bottom_sheet.dart';
 import 'package:strong_password/View/pages/password_generator.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/common/text_styles.dart';
-import 'package:strong_password/models/Hive/password.dart';
+import 'package:strong_password/models/password.dart';
 
 costumAppBar(
     {required String title,

@@ -1,19 +1,19 @@
-import 'package:credit_card_scanner/credit_card_scanner.dart';
-import 'package:credit_card_scanner/models/card_details.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:strong_password/View/pages/password_generator.dart';
+import 'package:strong_password/models/card.dart';
 
 // ignore: must_be_immutable
 class CardHolderInfo extends StatefulWidget {
   const CardHolderInfo({
     super.key,
-    this.cardDetails,
+    required this.card,
     this.cardLabel,
   });
 
-  final CardDetails? cardDetails;
+  final CreditCard card;
   final String? cardLabel;
+
 
   @override
   State<CardHolderInfo> createState() => _CardHolderInfoState();
@@ -26,7 +26,7 @@ class _CardHolderInfoState extends State<CardHolderInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.cardLabel ?? '1131'),
+        title: Text(widget.cardLabel ?? 'Card Info'),
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
@@ -69,8 +69,8 @@ class _CardHolderInfoState extends State<CardHolderInfo> {
                     left: 20,
                     child: Text(
                       isVisible
-                          ? widget.cardDetails?.cardNumber ?? '1234 5678 9101 1131'
-                          : '**** 1131',
+                          ? widget.card.cardNumber
+                          : '**** ${widget.card.cardNumber.substring(12, 16)}',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w500,
@@ -82,8 +82,8 @@ class _CardHolderInfoState extends State<CardHolderInfo> {
                     left: 20,
                     child: Text(
                       isVisible
-                          ? widget.cardDetails?.cardHolderName ?? 'John Smith'
-                          : 'John Smith',
+                          ? widget.card.cardHolder
+                          : '*** ***',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -95,7 +95,7 @@ class _CardHolderInfoState extends State<CardHolderInfo> {
                     right: 20,
                     child: Text(
                       isVisible
-                          ? widget.cardDetails?.expiryDate ?? '12/24'
+                          ? widget.card.cardExpiry
                           : '**/**',
                       style: const TextStyle(
                         fontSize: 20,
@@ -120,20 +120,20 @@ class _CardHolderInfoState extends State<CardHolderInfo> {
               CardPageInfoCard(
                 fieldName: 'Card Number: ',
                 text: isVisible
-                    ? widget.cardDetails?.cardNumber ?? '1234 5678 9101 1131'
-                    : '**** 1131',
+                    ? widget.card.cardNumber
+                    : '**** ${widget.card.cardNumber.substring(12, 16)}',
               ),
               const Gap(10),
               CardPageInfoCard(
                   fieldName: 'Card Holder: ',
                   text: isVisible
-                      ? widget.cardDetails?.cardHolderName ?? 'John Smith'
-                      : 'John Smith'),
+                      ? widget.card.cardHolder
+                      : '*** ***'),
               const Gap(10),
               CardPageInfoCard(
                   fieldName: 'Expiry Date: ',
                   text: isVisible
-                      ? widget.cardDetails?.expiryDate ?? '12/24'
+                      ? widget.card.cardExpiry
                       : '**/**'),
               const Gap(10),
               CardPageInfoCard(

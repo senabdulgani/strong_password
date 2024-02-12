@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:strong_password/models/Hive/boxes.dart';
-import 'package:strong_password/models/Hive/password.dart';
+import 'package:strong_password/models/boxes.dart';
+import 'package:strong_password/models/password.dart';
 
 class BottomSheetComponent extends StatefulWidget {
   const BottomSheetComponent({

@@ -1,12 +1,12 @@
-import 'package:credit_card_scanner/credit_card_scanner.dart';
 import 'package:flutter/material.dart';
+import 'package:credit_card_scanner/credit_card_scanner.dart';
 import 'package:strong_password/View/component/costum_app_bar.dart';
 import 'package:strong_password/View/component/search_bar.dart';
 import 'package:strong_password/View/pages/card_holder_info.dart';
 import 'package:strong_password/common/color_constants.dart';
-import 'package:strong_password/common/text_styles.dart';
-import 'package:strong_password/models/Hive/boxes.dart';
-import 'package:strong_password/models/Hive/password.dart';
+import 'package:strong_password/models/boxes.dart';
+import 'package:strong_password/models/card.dart';
+import 'package:strong_password/models/password.dart';
 
 class StrongPassword extends StatefulWidget {
   const StrongPassword({super.key});
@@ -22,18 +22,23 @@ class _StrongPasswordState extends State<StrongPassword> {
   void initState() {
     super.initState();
     _filteredPasswords = boxPasswords.values.toList() as List<Password>;
+    _filteredCreditCard = cardBox.values.toList() as List<CreditCard>;
   }
 
   bool isCancelActive = false;
   List<Password> _filteredPasswords = [];
-  // todo If user IOS 12 and above dont use credit card scanner plugin.
+  List<CreditCard> _filteredCreditCard = [];
 
   CardDetails? _cardDetails;
   CardScanOptions scanOptions = const CardScanOptions(
-    scanCardHolderName: true,
+    scanCardHolderName: false,
+    scanExpiryDate: true,
+    enableLuhnCheck: false,
+    cardScannerTimeOut: 1,
+    initialScansToDrop: 1,
+    enableDebugLogs: true,
     validCardsToScanBeforeFinishingScan: 5,
     possibleCardHolderNamePositions: [
-      CardHolderNameScanPosition.aboveCardNumber,
       CardHolderNameScanPosition.belowCardNumber,
     ],
   );
@@ -41,17 +46,28 @@ class _StrongPasswordState extends State<StrongPassword> {
   Future<void> scanCard() async {
     final CardDetails? cardDetails =
         await CardScanner.scanCard(scanOptions: scanOptions);
-    if (!mounted || cardDetails == null) return;
+    if (!mounted || cardDetails == null) {
+      return;
+    }
     setState(() {
       _cardDetails = cardDetails;
+      CreditCard creditCard = CreditCard(
+        cardHolder: _cardDetails!.cardHolderName,
+        cardNumber: _cardDetails!.cardNumber,
+        cardExpiry: _cardDetails!.expiryDate,
+        cardIssuer: _cardDetails!.cardIssuer,
+      );
+      cardBox.put(_filteredCreditCard.length, creditCard);
+      _filteredCreditCard.add(creditCard);
     });
-    debugPrint('Card number: ${cardDetails.cardNumber}');
   }
+  // todo If user IOS 12 and above dont use credit card scanner plugin.
 
   void onSearch(String query) {
     if (query.isEmpty) {
       setState(() {
         _filteredPasswords = boxPasswords.values.toList() as List<Password>;
+        _filteredCreditCard = cardBox.values.toList() as List<CreditCard>;
       });
     } else {
       setState(() {
@@ -61,6 +77,13 @@ class _StrongPasswordState extends State<StrongPassword> {
             .where((password) =>
                 password.name.toLowerCase().contains(query.toLowerCase()))
             .toList() as List<Password>;
+
+        _filteredCreditCard = cardBox
+            .toMap()
+            .values
+            .where((card) =>
+                card.cardHolder.toLowerCase().contains(query.toLowerCase()))
+            .toList() as List<CreditCard>;
       });
     }
   }
@@ -115,13 +138,14 @@ class _StrongPasswordState extends State<StrongPassword> {
             ),
             const SizedBox(height: 10),
             // todo Login list in my passwords
-            Text(
-              'LOGINS',
-              style: TextStyle(
-                  color: Colors.grey.shade700,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold),
-            ),
+            if (_filteredPasswords.isNotEmpty)
+              Text(
+                'LOGINS',
+                style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
+              ),
             SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
               child: ListView.builder(
@@ -133,23 +157,139 @@ class _StrongPasswordState extends State<StrongPassword> {
                       TextEditingController(text: password.name);
                   TextEditingController passwordController =
                       TextEditingController(text: password.password);
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    tileColor: Colors.white,
-                    title: Text(
-                      password.name,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                  return GestureDetector(
+                    child: Dismissible(
+                      dismissThresholds: const {
+                        DismissDirection.endToStart: 0.5
+                      },
+                      direction: DismissDirection.endToStart,
+                      key: ValueKey<int>(password.hashCode),
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        color: Colors.red,
+                        child: const Padding(
+                          padding: EdgeInsets.only(right: 24.0),
+                          child: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      onDismissed: (_) {
+                        setState(() {
+                          boxPasswords.deleteAt(index);
+                          _filteredPasswords.removeAt(index);
+                        });
+                      },
+                      child: ListTile(
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 8),
+                        tileColor: Colors.white,
+                        title: Text(
+                          password.name,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '•' * password.password.toString().length,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        trailing: SizedBox(
+                          width: 100,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.copy),
+                                color: Colors.black,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  // setState(() {
+                                  //   boxPasswords.deleteAt(index);
+                                  //   _filteredPasswords.removeAt(index);
+                                  // });
+                                },
+                                icon: const Icon(Icons.more_vert),
+                                color: Colors.black,
+                              ),
+                              // IconButton(
+                              //   onPressed: () {
+                              //     setState(() {
+                              //       boxPasswords.deleteAt(index);
+                              //       _filteredPasswords.removeAt(index);
+                              //     });
+                              //   },
+                              //   icon: const Icon(Icons.delete),
+                              //   color: Colors.red,
+                              // ),
+                              // Text('15.04', style: ProjectTextStyles.date),
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          showPasswordEditBottomSheet(
+                            context,
+                            nameController: nameController,
+                            passwordController: passwordController,
+                            isUpdate: true,
+                            index: index,
+                            filteredPasswords: _filteredPasswords,
+                          ).then((value) => setState(() {}));
+                        },
                       ),
                     ),
-                    subtitle: Text(
-                      '•' * password.password.toString().length,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                  );
+                },
+              ),
+            ),
+            if (_filteredCreditCard.isNotEmpty)
+              Text(
+                'CARDS',
+                style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
+              ),
+            SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: ListView.builder(
+                itemCount: _filteredCreditCard.length,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int index) {
+                  CreditCard card = _filteredCreditCard[index];
+                  return ListTile(
+                    leading: Icon(Icons.star, color: Colors.yellow.shade700),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                    tileColor: Colors.white,
+                    title: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text:
+                                '${card.cardIssuer}  - **** ', // Boş olabilir.
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: card.cardNumber.substring(12, 16),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     trailing: SizedBox(
@@ -166,14 +306,13 @@ class _StrongPasswordState extends State<StrongPassword> {
                           IconButton(
                             onPressed: () {
                               setState(() {
-                                boxPasswords.deleteAt(index);
-                                _filteredPasswords.removeAt(index);
+                                cardBox.deleteAt(index);
+                                _filteredCreditCard.removeAt(index);
                               });
                             },
-                            icon: const Icon(Icons.more_vert),
+                            icon: const Icon(Icons.delete),
                             color: Colors.black,
                           ),
-
                           // IconButton(
                           //   onPressed: () {
                           //     setState(() {
@@ -189,14 +328,16 @@ class _StrongPasswordState extends State<StrongPassword> {
                       ),
                     ),
                     onTap: () {
-                      showPasswordEditBottomSheet(
+                      Navigator.push(
                         context,
-                        nameController: nameController,
-                        passwordController: passwordController,
-                        isUpdate: true,
-                        index: index,
-                        filteredPasswords: _filteredPasswords,
-                      ).then((value) => setState(() {}));
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return CardHolderInfo(
+                              card: card,
+                            );
+                          },
+                        ),
+                      );
                     },
                   );
                 },
@@ -215,16 +356,29 @@ class _StrongPasswordState extends State<StrongPassword> {
             ),
             backgroundColor: AppColors.primaryColor,
             onPressed: () {
-              // if(_cardDetails == null){
-              //   // scanCard();
+              // scan and then go to car page
+              scanCard();
+              // cardBox
+              //     .put(
+              //       _filteredCreditCard.length,
+              //       _cardDetails,
+              //     )
+              //     .then((value) => setState(() {}));
+              // _filteredCreditCard.add(_cardDetails as CreditCard);
               // } else {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return CardHolderInfo(
-                  cardDetails: _cardDetails,
-                );
-              }));
+
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) {
+              //       return CardHolderInfo(
+              //         cardDetails: _cardDetails,
+              //       );
+              //     },
+              //   ),
+              // );
+
               // }
-              // scanCard();
               // Bu kendisi otomatik kamera izini alıyor.
               // todo Kullanıcı izin vermezse ne olacak bu durumu yönet.
             },
