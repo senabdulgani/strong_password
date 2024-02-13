@@ -78,13 +78,13 @@ class _DetectPasswordState extends State<DetectPassword> {
               ],
             ),
             const SizedBox(height: 20),
-            CostumTextField(
+            CostumPasswordTextField(
               controller: _passwordController,
               isVisible: isVisible,
               labelText: widget.isUpdate == true ? 'New Password' : 'Password',
             ),
             const SizedBox(height: 12),
-            CostumTextField(
+            CostumPasswordTextField(
               controller: _confirmPasswordController,
               isVisible: isVisible,
               labelText: widget.isUpdate == true
@@ -133,8 +133,8 @@ class Header extends StatelessWidget {
 }
 
 // ignore: must_be_immutable
-class CostumTextField extends StatefulWidget {
-  CostumTextField({
+class CostumPasswordTextField extends StatefulWidget {
+  CostumPasswordTextField({
     super.key,
     required this.controller,
     required this.isVisible,
@@ -146,10 +146,10 @@ class CostumTextField extends StatefulWidget {
   final String labelText;
 
   @override
-  State<CostumTextField> createState() => _CostumTextFieldState();
+  State<CostumPasswordTextField> createState() => _CostumPasswordTextFieldState();
 }
 
-class _CostumTextFieldState extends State<CostumTextField> {
+class _CostumPasswordTextFieldState extends State<CostumPasswordTextField> {
   @override
   Widget build(BuildContext context) {
     return Stack(

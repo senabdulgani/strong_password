@@ -49,7 +49,7 @@ class _CheckPasswordState extends State<CheckPassword> {
               ],
             ),
             const SizedBox(height: 30),
-            CostumTextField(
+            CostumPasswordTextField(
               controller: _passwordController,
               isVisible: isVisible,
               labelText: 'Password',

@@ -4,6 +4,7 @@ import 'package:strong_password/View/component/costum_app_bar.dart';
 import 'package:strong_password/View/component/search_bar.dart';
 import 'package:strong_password/View/pages/card_holder_info.dart';
 import 'package:strong_password/View/pages/check_password_page.dart';
+import 'package:strong_password/View/pages/details_password_view.dart';
 import 'package:strong_password/View/pages/password_generator.dart';
 import 'package:strong_password/View/pages/settings_view.dart';
 import 'package:strong_password/common/color_constants.dart';
@@ -20,6 +21,7 @@ class StrongPassword extends StatefulWidget {
 
 class _StrongPasswordState extends State<StrongPassword>
     with SingleTickerProviderStateMixin {
+  
   final String title = 'Passwords';
   late bool _isUnlocked;
 
@@ -37,7 +39,7 @@ class _StrongPasswordState extends State<StrongPassword>
 
   CardDetails? _cardDetails;
   CardScanOptions scanOptions = const CardScanOptions(
-    scanCardHolderName: false,
+    scanCardHolderName: true,
     scanExpiryDate: true,
     enableLuhnCheck: false,
     cardScannerTimeOut: 1,
@@ -161,43 +163,43 @@ class _StrongPasswordState extends State<StrongPassword>
         child: ListView(
           children: [
             SearchPassword(onSearch: onSearch),
-            Row(
-              children: [
-                const Spacer(),
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 2,
-                      ),
-                      color: Colors.white,
-                    ),
-                    padding:
-                        const EdgeInsets.all(8), // Adjust padding as needed
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'By Name',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     const Spacer(),
+            //     InkWell(
+            //       onTap: () {},
+            //       child: Container(
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(8),
+            //           border: Border.all(
+            //             color: Colors.black,
+            //             width: 2,
+            //           ),
+            //           color: Colors.white,
+            //         ),
+            //         padding:
+            //             const EdgeInsets.all(8), // Adjust padding as needed
+            //         child: const Row(
+            //           mainAxisSize: MainAxisSize.min,
+            //           children: [
+            //             Text(
+            //               'By Name',
+            //               style: TextStyle(
+            //                 fontSize: 12,
+            //                 color: Colors.black,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //             Icon(
+            //               Icons.arrow_drop_down,
+            //               color: Colors.black,
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 10),
             // todo Login list in my passwords
             if (_filteredPasswords.isNotEmpty)
@@ -219,6 +221,10 @@ class _StrongPasswordState extends State<StrongPassword>
                       TextEditingController(text: password.name);
                   TextEditingController passwordController =
                       TextEditingController(text: password.password);
+                  TextEditingController websiteController=
+                      TextEditingController(text: password.website);
+                  TextEditingController noteController =
+                      TextEditingController(text: password.note);
                   return GestureDetector(
                     child: Dismissible(
                       dismissThresholds: const {
@@ -285,7 +291,16 @@ class _StrongPasswordState extends State<StrongPassword>
                               //   color: Colors.black,
                               // ),
                               PopUpMenuButton(
-                                firstItem: () {},
+                                firstItem: () {
+                                  showPasswordEditBottomSheet(
+                                    context,
+                                    nameController: nameController,
+                                    passwordController: passwordController,
+                                    isUpdate: true,
+                                    index: index,
+                                    filteredPasswords: _filteredPasswords,
+                                  ).then((value) => setState(() {}));
+                                },
                                 secondItem: () {
                                   setState(() {
                                     boxPasswords.deleteAt(index);
@@ -293,7 +308,6 @@ class _StrongPasswordState extends State<StrongPassword>
                                   });
                                 },
                               ),
-
                               // IconButton(
                               //   onPressed: () {
                               //     setState(() {
@@ -309,6 +323,20 @@ class _StrongPasswordState extends State<StrongPassword>
                           ),
                         ),
                         onTap: () {
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) {
+                          //       return PasswordDetailsView(
+                          //         nameController: nameController,
+                          //         passwordController: passwordController,
+                          //         websiteController: websiteController,
+                          //         noteController: noteController,
+                          //         index: index,
+                          //       );
+                          //     },
+                          //   ),
+                          // );
                           showPasswordEditBottomSheet(
                             context,
                             nameController: nameController,
@@ -409,7 +437,7 @@ class _StrongPasswordState extends State<StrongPassword>
                             );
                           },
                         ),
-                      );
+                      ).then((value) => setState(() {}));
                     },
                   );
                 },
@@ -504,6 +532,10 @@ class _PopUpMenuButtonState extends State<PopUpMenuButton> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<int>(
+      color: Colors.grey.shade100,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       offset: const Offset(-20, 20),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
         const PopupMenuItem<int>(

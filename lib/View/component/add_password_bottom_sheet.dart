@@ -11,6 +11,8 @@ class BottomSheetComponent extends StatefulWidget {
     super.key,
     required this.nameController,
     required this.passwordController,
+    this.websiteController,
+    this.noteController,
     required this.index,
     required this.filteredPasswords,
     required this.isUpdate,
@@ -18,6 +20,8 @@ class BottomSheetComponent extends StatefulWidget {
 
   final TextEditingController nameController;
   final TextEditingController passwordController;
+  final TextEditingController? websiteController;
+  final TextEditingController? noteController;
   final List<Password> filteredPasswords;
   final int index;
   final bool isUpdate;
@@ -40,9 +44,9 @@ class _BottomSheetComponentState extends State<BottomSheetComponent> {
           children: <Widget>[
             Row(
               children: [
-                const Text(
-                  'Fill out the form',
-                  style: TextStyle(
+                Text(
+                  widget.isUpdate ? 'Update Password' : 'Add New Password',
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -55,10 +59,15 @@ class _BottomSheetComponentState extends State<BottomSheetComponent> {
                     ),
                   ),
                   onPressed: () {
-                    // go to add details page
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return const PasswordDetailsView();
+                      return PasswordDetailsView(
+                        nameController: widget.nameController,
+                        passwordController: widget.passwordController,
+                        websiteController: widget.websiteController,
+                        noteController: widget.noteController,
+                        index: widget.index,
+                      );
                     }));
                   },
                   child: Text(

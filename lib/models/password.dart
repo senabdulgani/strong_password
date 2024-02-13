@@ -1,3 +1,4 @@
+// ignore: depend_on_referenced_packages
 import 'package:hive/hive.dart';
 
 part 'password.g.dart';
@@ -16,10 +17,18 @@ class Password {
   @HiveField(3)
   bool? isFavorite = false;
 
+  @HiveField(4)
+  String? website;
+
+  @HiveField(5)
+  String? note;
+
   Password({
     required this.name,
     required this.password,
     this.createdAt,
     this.isFavorite,
+    this.website,
+    this.note,
   });
 }
