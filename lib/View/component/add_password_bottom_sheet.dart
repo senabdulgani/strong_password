@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:strong_password/models/Hive/boxes.dart';
-import 'package:strong_password/models/Hive/password.dart';
+import 'package:gap/gap.dart';
+import 'package:strong_password/View/component/costum_button.dart';
+import 'package:strong_password/View/pages/details_password_view.dart';
+import 'package:strong_password/common/color_constants.dart';
+import 'package:strong_password/models/boxes.dart';
+import 'package:strong_password/models/password.dart';
 
 class BottomSheetComponent extends StatefulWidget {
   const BottomSheetComponent({
     super.key,
     required this.nameController,
     required this.passwordController,
+    this.websiteController,
+    this.noteController,
     required this.index,
     required this.filteredPasswords,
     required this.isUpdate,
@@ -14,6 +20,8 @@ class BottomSheetComponent extends StatefulWidget {
 
   final TextEditingController nameController;
   final TextEditingController passwordController;
+  final TextEditingController? websiteController;
+  final TextEditingController? noteController;
   final List<Password> filteredPasswords;
   final int index;
   final bool isUpdate;
@@ -34,12 +42,43 @@ class _BottomSheetComponentState extends State<BottomSheetComponent> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const Text(
-              'Fill out the form',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Text(
+                  widget.isUpdate ? 'Update Password' : 'Add New Password',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.grey.shade100,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return PasswordDetailsView(
+                        nameController: widget.nameController,
+                        passwordController: widget.passwordController,
+                        websiteController: widget.websiteController,
+                        noteController: widget.noteController,
+                        index: widget.index,
+                      );
+                    }));
+                  },
+                  child: Text(
+                    'Add Details',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.componentColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20.0),
             TextFormField(
@@ -64,43 +103,43 @@ class _BottomSheetComponentState extends State<BottomSheetComponent> {
               },
             ),
             const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                if (widget.isUpdate) {
-                  widget.filteredPasswords[widget.index - 1] = Password(
-                    name: widget.nameController.text,
-                    password: widget.passwordController.text,
-                  );
-                  boxPasswords
-                      .put(
-                        'key_${widget.index.toString()}',
-                        Password(
-                          name: widget.nameController.text,
-                          password: widget.passwordController.text,
-                        ),
-                      )
-                      .then((value) => Navigator.pop(context));
-                } else {
-                  // * isUpdate = false
-                  widget.filteredPasswords.add(
-                    Password(
+            CostumButton(
+                onPressed: () {
+                  if (widget.isUpdate) {
+                    widget.filteredPasswords[widget.index] = Password(
                       name: widget.nameController.text,
                       password: widget.passwordController.text,
-                    ),
-                  );
-                  boxPasswords
-                      .put(
-                        'key_${widget.index.toString()}',
-                        Password(
-                          name: widget.nameController.text,
-                          password: widget.passwordController.text,
-                        ),
-                      )
-                      .then((value) => Navigator.pop(context));
-                }
-              },
-              child: const Text('Submit'),
-            ),
+                    );
+                    boxPasswords
+                        .put(
+                          'key_${widget.index.toString()}',
+                          Password(
+                            name: widget.nameController.text,
+                            password: widget.passwordController.text,
+                          ),
+                        )
+                        .then((value) => Navigator.pop(context));
+                  } else {
+                    // * isUpdate = false
+                    widget.filteredPasswords.add(
+                      Password(
+                        name: widget.nameController.text,
+                        password: widget.passwordController.text,
+                      ),
+                    );
+                    boxPasswords
+                        .put(
+                          'key_${widget.index.toString()}',
+                          Password(
+                            name: widget.nameController.text,
+                            password: widget.passwordController.text,
+                          ),
+                        )
+                        .then((value) => Navigator.pop(context));
+                  }
+                },
+                buttonText: 'Submit'),
+            const Gap(20.0),
           ],
         ),
       ),

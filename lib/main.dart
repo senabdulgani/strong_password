@@ -3,13 +3,16 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:strong_password/View/pages/check_password_page.dart';
 import 'package:strong_password/View/pages/detect_password_view.dart';
-import 'package:strong_password/models/Hive/boxes.dart';
-import 'package:strong_password/models/Hive/password.dart';
+import 'package:strong_password/models/boxes.dart';
+import 'package:strong_password/models/card.dart';
+import 'package:strong_password/models/password.dart';
 
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PasswordAdapter());
   boxPasswords = await Hive.openBox<Password>('passwordsBox');
+  Hive.registerAdapter(CreditCardAdapter());
+  cardBox = await Hive.openBox<CreditCard>('cardBox');
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isFirstLogin = prefs.getBool('firstLogin') ?? true;
@@ -52,7 +55,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Strong Password',
       theme: themeData,
-      home: appPassword == null ? const DetectPassword() : const CheckPassword(),
+      home: appPassword == null ? DetectPassword() : const CheckPassword(),
     );
   }
 }
