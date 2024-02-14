@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:strong_password/View/component/add_password_bottom_sheet.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/common/text_styles.dart';
-import 'package:strong_password/models/password.dart';
 
 
 void showCostumPasswordDetail(
@@ -28,26 +26,26 @@ void showCostumPasswordDetail(
       });
 }
 
-Future showPasswordEditBottomSheet(
-  BuildContext context, {
-  required TextEditingController nameController,
-  required TextEditingController passwordController,
-  required bool isUpdate,
-  required int index,
-  required List<Password> filteredPasswords,
-}) {
-  return showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return BottomSheetComponent(
-          nameController: nameController,
-          passwordController: passwordController,
-          index: index,
-          filteredPasswords: filteredPasswords,
-          isUpdate: isUpdate,
-        );
-      });
-}
+// Future showPasswordEditBottomSheet(
+//   BuildContext context, {
+//   required TextEditingController nameController,
+//   required TextEditingController passwordController,
+//   required bool isUpdate,
+//   required int index,
+//   required List<Password> filteredPasswords,
+// }) {
+//   return showModalBottomSheet(
+//       context: context,
+//       builder: (context) {
+//         return BottomSheetComponent(
+//           nameController: nameController,
+//           passwordController: passwordController,
+//           index: index,
+//           filteredPasswords: filteredPasswords,
+//           isUpdate: isUpdate,
+//         );
+//       });
+// }
 
 // Future<dynamic> showPasswordGenerator(
 //   BuildContext context,
