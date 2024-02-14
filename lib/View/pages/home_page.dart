@@ -304,11 +304,7 @@ class _StrongPasswordState extends State<StrongPassword>
                                   websiteController: websiteController,
                                   noteController: noteController,
                                   index: index,
-                                  onUpdate: (index, password) {
-                                    setState(() {
-                                      _filteredPasswords[index] = password;
-                                    });
-                                  },
+                                  
                                 );
                               },
                             ),
