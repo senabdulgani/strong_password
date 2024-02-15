@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:strong_password/View/component/costum_button.dart';
-import 'package:strong_password/models/boxes.dart';
 import 'package:strong_password/models/password.dart';
+import 'package:strong_password/provider/password/password_notifier.dart';
 
 // ignore: must_be_immutable
 class PasswordDetailsView extends StatefulWidget {
@@ -30,18 +31,13 @@ class PasswordDetailsView extends StatefulWidget {
 
 class _PasswordDetailsViewState extends State<PasswordDetailsView> {
 
-  late final TextEditingController webSite;
-  late final TextEditingController note;
-  
-  @override
-  void initState() {
-    super.initState();
-    webSite = note;
-    note = note;
-  }
-
   @override
   Widget build(BuildContext context) {
+
+    final passwordNotifier = Provider.of<PasswordNotifier>(context);
+
+    final boxPasswords = passwordNotifier.boxPasswords;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Password'),
@@ -92,11 +88,11 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                 TextFieldWithIcon(
                   labelText: 'Website (optional)',
                   iconData: Icons.web,
-                  controller: webSite,
+                  controller: widget.websiteController,
                 ),
                 const Gap(36),
                 TextFormField(
-                  controller: note,
+                  controller: widget.noteController,
                   minLines: 4,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
@@ -188,7 +184,7 @@ class TextFieldWithIcon extends StatelessWidget {
   final String labelText;
   final IconData iconData;
   final bool isObscure;
-  final TextEditingController controller;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {

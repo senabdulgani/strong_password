@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:credit_card_scanner/credit_card_scanner.dart';
-import 'package:strong_password/View/component/costum_app_bar.dart';
 import 'package:strong_password/View/component/search_bar.dart';
-import 'package:strong_password/View/pages/card_holder_info.dart';
-import 'package:strong_password/View/pages/check_password_page.dart';
-import 'package:strong_password/View/pages/details_password_view.dart';
-import 'package:strong_password/View/pages/password_generator.dart';
-import 'package:strong_password/View/pages/settings_view.dart';
+import 'package:strong_password/View/pages/Details/card_holder_info.dart';
+import 'package:strong_password/View/pages/Details/details_password_view.dart';
+import 'package:strong_password/View/pages/Feature/password_generator.dart';
+import 'package:strong_password/View/pages/Introduction/check_password_page.dart';
+import 'package:strong_password/View/pages/Settings/settings_view.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/models/boxes.dart';
 import 'package:strong_password/models/card.dart';
@@ -21,7 +20,6 @@ class StrongPassword extends StatefulWidget {
 
 class _StrongPasswordState extends State<StrongPassword>
     with SingleTickerProviderStateMixin {
-  
   final String title = 'Passwords';
   late bool _isUnlocked;
 
@@ -221,7 +219,7 @@ class _StrongPasswordState extends State<StrongPassword>
                       TextEditingController(text: password.name);
                   TextEditingController passwordController =
                       TextEditingController(text: password.password);
-                  TextEditingController websiteController=
+                  TextEditingController websiteController =
                       TextEditingController(text: password.website);
                   TextEditingController noteController =
                       TextEditingController(text: password.note);
@@ -277,30 +275,14 @@ class _StrongPasswordState extends State<StrongPassword>
                               const Spacer(),
                               IconButton(
                                 onPressed: () {
-                                  // setState(() {
-                                  //   boxPasswords.deleteAt(index);
-                                  //   _filteredPasswords.removeAt(index);
-                                  // });
+                                  // todo boxPasswords.deleteAt(index);
+                                  // todo _filteredPasswords.removeAt(index);
                                 },
                                 icon: const Icon(Icons.copy),
                                 color: Colors.black,
                               ),
-                              // IconButton(
-                              //   onPressed: () async {},
-                              //   icon: const Icon(Icons.more_vert),
-                              //   color: Colors.black,
-                              // ),
                               PopUpMenuButton(
-                                firstItem: () {
-                                  showPasswordEditBottomSheet(
-                                    context,
-                                    nameController: nameController,
-                                    passwordController: passwordController,
-                                    isUpdate: true,
-                                    index: index,
-                                    filteredPasswords: _filteredPasswords,
-                                  ).then((value) => setState(() {}));
-                                },
+                                firstItem: () {},
                                 secondItem: () {
                                   setState(() {
                                     boxPasswords.deleteAt(index);
@@ -308,43 +290,25 @@ class _StrongPasswordState extends State<StrongPassword>
                                   });
                                 },
                               ),
-                              // IconButton(
-                              //   onPressed: () {
-                              //     setState(() {
-                              //       boxPasswords.deleteAt(index);
-                              //       _filteredPasswords.removeAt(index);
-                              //     });
-                              //   },
-                              //   icon: const Icon(Icons.delete),
-                              //   color: Colors.red,
-                              // ),
-                              // Text('15.04', style: ProjectTextStyles.date),
                             ],
                           ),
                         ),
                         onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) {
-                          //       return PasswordDetailsView(
-                          //         nameController: nameController,
-                          //         passwordController: passwordController,
-                          //         websiteController: websiteController,
-                          //         noteController: noteController,
-                          //         index: index,
-                          //       );
-                          //     },
-                          //   ),
-                          // );
-                          showPasswordEditBottomSheet(
+                          Navigator.push(
                             context,
-                            nameController: nameController,
-                            passwordController: passwordController,
-                            isUpdate: true,
-                            index: index,
-                            filteredPasswords: _filteredPasswords,
-                          ).then((value) => setState(() {}));
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return PasswordDetailsView(
+                                  nameController: nameController,
+                                  passwordController: passwordController,
+                                  websiteController: websiteController,
+                                  noteController: noteController,
+                                  index: index,
+                                  
+                                );
+                              },
+                            ),
+                          );
                         },
                       ),
                     ),
@@ -413,17 +377,6 @@ class _StrongPasswordState extends State<StrongPassword>
                             icon: const Icon(Icons.delete),
                             color: Colors.black,
                           ),
-                          // IconButton(
-                          //   onPressed: () {
-                          //     setState(() {
-                          //       boxPasswords.deleteAt(index);
-                          //       _filteredPasswords.removeAt(index);
-                          //     });
-                          //   },
-                          //   icon: const Icon(Icons.delete),
-                          //   color: Colors.red,
-                          // ),
-                          // Text('15.04', style: ProjectTextStyles.date),
                         ],
                       ),
                     ),
@@ -496,14 +449,22 @@ class _StrongPasswordState extends State<StrongPassword>
               TextEditingController nameController = TextEditingController();
               TextEditingController passwordController =
                   TextEditingController();
-              showPasswordEditBottomSheet(
+              TextEditingController websiteController = TextEditingController();
+              TextEditingController noteController = TextEditingController();
+              Navigator.push(
                 context,
-                nameController: nameController,
-                passwordController: passwordController,
-                index: _filteredPasswords.length,
-                filteredPasswords: _filteredPasswords,
-                isUpdate: false,
-              ).then((value) => setState(() {}));
+                MaterialPageRoute(
+                  builder: (context) {
+                    return PasswordDetailsView(
+                      nameController: nameController,
+                      passwordController: passwordController,
+                      websiteController: websiteController,
+                      noteController: noteController,
+                      index: _filteredPasswords.length,
+                    );
+                  },
+                ),
+              );
             },
             child: const Icon(Icons.add),
           ),

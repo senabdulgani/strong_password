@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:strong_password/View/pages/detect_password_view.dart';
-import 'package:strong_password/View/pages/password_generator.dart';
+import 'package:strong_password/View/pages/Introduction/detect_password_view.dart';
+import 'package:strong_password/View/pages/Feature/password_generator.dart';
 import 'package:strong_password/common/color_constants.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -17,7 +17,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: const Text('Settings'),
         centerTitle: false,
-        backgroundColor: AppColors.componentColor,
+        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: Column(

@@ -5,10 +5,12 @@ class CostumButton extends StatelessWidget {
     super.key,
     required this.onPressed,
     required this.buttonText,
+    this.color = Colors.black,
   });
 
   final Function()? onPressed;
   final String buttonText;
+  final Color? color;
 
   
   @override
@@ -20,7 +22,7 @@ class CostumButton extends StatelessWidget {
         onPressed: onPressed,
         style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(Colors.black),
+              MaterialStateProperty.all<Color>(color!),
         ),
         child: Text(
           buttonText,
