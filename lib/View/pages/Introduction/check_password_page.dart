@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:strong_password/View/component/costum_button.dart';
-import 'package:strong_password/View/pages/detect_password_view.dart';
+import 'package:strong_password/View/pages/Introduction/detect_password_view.dart';
 import 'package:strong_password/View/pages/home_page.dart';
 
 class CheckPassword extends StatefulWidget {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:credit_card_scanner/credit_card_scanner.dart';
 import 'package:strong_password/View/component/search_bar.dart';
-import 'package:strong_password/View/pages/card_holder_info.dart';
-import 'package:strong_password/View/pages/check_password_page.dart';
-import 'package:strong_password/View/pages/details_password_view.dart';
-import 'package:strong_password/View/pages/password_generator.dart';
-import 'package:strong_password/View/pages/settings_view.dart';
+import 'package:strong_password/View/pages/Details/card_holder_info.dart';
+import 'package:strong_password/View/pages/Details/details_password_view.dart';
+import 'package:strong_password/View/pages/Feature/password_generator.dart';
+import 'package:strong_password/View/pages/Introduction/check_password_page.dart';
+import 'package:strong_password/View/pages/Settings/settings_view.dart';
 import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/models/boxes.dart';
 import 'package:strong_password/models/card.dart';

@@ -15,7 +15,7 @@ class Password {
   DateTime? createdAt;
 
   @HiveField(3)
-  bool? isFavorite = false;
+  bool isFavorite;
 
   @HiveField(4)
   String? website;
@@ -27,7 +27,7 @@ class Password {
     required this.name,
     required this.password,
     this.createdAt,
-    this.isFavorite,
+    this.isFavorite = false,
     this.website,
     this.note,
   });

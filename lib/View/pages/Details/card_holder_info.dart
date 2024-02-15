@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:strong_password/View/pages/password_generator.dart';
+import 'package:strong_password/View/pages/Feature/password_generator.dart';
 import 'package:strong_password/models/card.dart';
 
 // ignore: must_be_immutable

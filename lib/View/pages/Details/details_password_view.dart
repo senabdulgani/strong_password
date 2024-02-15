@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:strong_password/View/component/costum_button.dart';
-import 'package:strong_password/models/boxes.dart';
 import 'package:strong_password/models/password.dart';
+import 'package:strong_password/provider/password/password_notifier.dart';
 
 // ignore: must_be_immutable
 class PasswordDetailsView extends StatefulWidget {
@@ -32,6 +33,11 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+
+    final passwordNotifier = Provider.of<PasswordNotifier>(context);
+
+    final boxPasswords = passwordNotifier.boxPasswords;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Password'),

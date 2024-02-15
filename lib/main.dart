@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:strong_password/View/pages/check_password_page.dart';
-import 'package:strong_password/View/pages/detect_password_view.dart';
+import 'package:strong_password/View/pages/Introduction/check_password_page.dart';
+import 'package:strong_password/View/pages/Introduction/detect_password_view.dart';
 import 'package:strong_password/models/boxes.dart';
 import 'package:strong_password/models/card.dart';
 import 'package:strong_password/models/password.dart';
