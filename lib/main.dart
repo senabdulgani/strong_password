@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:strong_password/View/pages/Introduction/check_password_page.dart';
 import 'package:strong_password/View/pages/Introduction/detect_password_view.dart';
-import 'package:strong_password/models/boxes.dart';
-import 'package:strong_password/models/card.dart';
-import 'package:strong_password/models/password.dart';
+import 'package:strong_password/provider/password/password_notifier.dart';
 
 void main() async {
-  await Hive.initFlutter();
-  Hive.registerAdapter(PasswordAdapter());
-  boxPasswords = await Hive.openBox<Password>('passwordsBox');
-  Hive.registerAdapter(CreditCardAdapter());
-  cardBox = await Hive.openBox<CreditCard>('cardBox');
+
+  PasswordNotifier().initializeBoxes();
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isFirstLogin = prefs.getBool('firstLogin') ?? true;
@@ -52,10 +47,17 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         brightness: isDark ? Brightness.dark : Brightness.light);
 
-    return MaterialApp(
-      title: 'Strong Password',
-      theme: themeData,
-      home: appPassword == null ? DetectPassword() : const CheckPassword(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => PasswordNotifier(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Strong Password',
+        theme: themeData,
+        home: appPassword == null ? DetectPassword() : const CheckPassword(),
+      ),
     );
   }
 }

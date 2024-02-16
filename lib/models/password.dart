@@ -31,4 +31,6 @@ class Password {
     this.website,
     this.note,
   });
+
+  void save() {}
 }

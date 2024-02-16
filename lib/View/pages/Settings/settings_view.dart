@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:strong_password/View/pages/Introduction/detect_password_view.dart';
 import 'package:strong_password/View/pages/Feature/password_generator.dart';
-import 'package:strong_password/common/color_constants.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

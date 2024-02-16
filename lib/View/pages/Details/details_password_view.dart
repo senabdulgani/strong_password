@@ -7,37 +7,41 @@ import 'package:strong_password/provider/password/password_notifier.dart';
 
 // ignore: must_be_immutable
 class PasswordDetailsView extends StatefulWidget {
-  PasswordDetailsView({
-    super.key,
-    required this.nameController,
-    required this.passwordController,
-    required this.index,
-    this.websiteController,
-    this.noteController,
-  }) {
-    websiteController ??= TextEditingController();
-    noteController ??= TextEditingController();
-  }
+  final Password? password;
 
-  final TextEditingController nameController;
-  final TextEditingController passwordController;
-  final int index;
-  TextEditingController? websiteController;
-  TextEditingController? noteController;
+  const PasswordDetailsView({
+    super.key,
+    this.password,
+  });
 
   @override
   State<PasswordDetailsView> createState() => _PasswordDetailsViewState();
 }
 
 class _PasswordDetailsViewState extends State<PasswordDetailsView> {
+  late final PasswordNotifier passwordProvider;
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController websiteController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    passwordProvider = Provider.of<PasswordNotifier>(context, listen: false);
+
+    // Check if a selected password was provided
+    if (widget.password != null) {
+      nameController.text = widget.password!.name;
+      passwordController.text = widget.password!.password;
+      websiteController.text = widget.password!.website ?? '';
+      noteController.text = widget.password!.note ?? '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    final passwordNotifier = Provider.of<PasswordNotifier>(context);
-
-    final boxPasswords = passwordNotifier.boxPasswords;
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Password'),
@@ -65,7 +69,7 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                 TextFieldWithIcon(
                   labelText: 'Password label',
                   iconData: Icons.add_a_photo,
-                  controller: widget.nameController,
+                  controller: nameController,
                 ),
                 const Gap(12),
                 // const FieldInfoArea(
@@ -76,7 +80,7 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                   labelText: 'Enter password',
                   iconData: Icons.security,
                   isObscure: true,
-                  controller: widget.passwordController,
+                  controller: passwordController,
                 ),
                 const Gap(12),
                 // TextFieldWithIcon(
@@ -88,11 +92,11 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                 TextFieldWithIcon(
                   labelText: 'Website (optional)',
                   iconData: Icons.web,
-                  controller: widget.websiteController,
+                  controller: websiteController,
                 ),
                 const Gap(36),
                 TextFormField(
-                  controller: widget.noteController,
+                  controller: noteController,
                   minLines: 4,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
@@ -107,15 +111,27 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                 const Gap(20),
                 CostumButton(
                     onPressed: () {
-                      boxPasswords.put(
-                        'key_${widget.index.toString()}',
-                        Password(
-                          name: widget.nameController.text,
-                          password: widget.passwordController.text,
-                          website: widget.websiteController!.text,
-                          note: widget.noteController!.text,
-                        ),
-                      );
+                      // update on this index or add password
+                      if (widget.password != null) {
+                        passwordProvider.updatePassword(
+                          photo: Password(
+                            name: nameController.text,
+                            password: passwordController.text,
+                            website: websiteController.text,
+                            note: noteController.text,
+                          ),
+                        );
+                      } else {
+                        passwordProvider.addPassword(
+                          photo: Password(
+                            name: nameController.text,
+                            password: passwordController.text,
+                            website: websiteController.text,
+                            note: noteController.text,
+                          ),
+                        );
+                      }
+                      Navigator.pop(context);
                       debugPrint('Password saved');
                     },
                     buttonText: 'Save'),
