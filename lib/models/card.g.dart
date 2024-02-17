@@ -20,7 +20,8 @@ class CreditCardAdapter extends TypeAdapter<CreditCard> {
       cardHolder: fields[0] as String,
       cardNumber: fields[1] as String,
       cardExpiry: fields[2] as String,
-      cardCvv: fields[3] as String,
+      isFavorite: fields[6] as bool,
+      cardCvv: fields[3] as String?,
       cardIssuer: fields[4] as String?,
       cardName: fields[5] as String?,
     );
@@ -29,7 +30,7 @@ class CreditCardAdapter extends TypeAdapter<CreditCard> {
   @override
   void write(BinaryWriter writer, CreditCard obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.cardHolder)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class CreditCardAdapter extends TypeAdapter<CreditCard> {
       ..writeByte(4)
       ..write(obj.cardIssuer)
       ..writeByte(5)
-      ..write(obj.cardName);
+      ..write(obj.cardName)
+      ..writeByte(6)
+      ..write(obj.isFavorite);
   }
 
   @override

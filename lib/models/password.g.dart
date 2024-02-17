@@ -19,20 +19,29 @@ class PasswordAdapter extends TypeAdapter<Password> {
     return Password(
       name: fields[0] as String,
       password: fields[1] as String,
+      website: fields[4] as String,
+      note: fields[5] as String,
       createdAt: fields[2] as DateTime?,
+      isFavorite: fields[3] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Password obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.password)
       ..writeByte(2)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(3)
+      ..write(obj.isFavorite)
+      ..writeByte(4)
+      ..write(obj.website)
+      ..writeByte(5)
+      ..write(obj.note);
   }
 
   @override

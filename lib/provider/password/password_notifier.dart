@@ -1,23 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:strong_password/models/card.dart';
 import 'package:strong_password/models/password.dart';
 import 'package:strong_password/provider/password/password_service.dart';
 
 class PasswordNotifier extends ChangeNotifier {
-  late Box<Password> boxPasswords;
-  late Box<CreditCard> cardBox;
-
-  Future<void> initializeBoxes() async {
-    await Hive.initFlutter();
-    Hive.registerAdapter(PasswordAdapter());
-    Hive.registerAdapter(CreditCardAdapter());
-
-    boxPasswords = await Hive.openBox<Password>('passwordsBox');
-    cardBox = await Hive.openBox<CreditCard>('cardBox');
-  }
 
   List<Password> passwords = [];
   PasswordService passwordService = PasswordService();
@@ -25,52 +10,41 @@ class PasswordNotifier extends ChangeNotifier {
   Future<void> getAllPasswords() async {
     await passwordService.getAllPasswords().then((value) {
       passwords = value;
-
+      
       notifyListeners();
     });
   }
 
-  // Future<void> deletePhotoList() async {
-  //   await passwordService.deleteAllPhotos();
-  //   List<Password> allphotos = await passwordService.getAllPhotos();
-  //   for (var photo in allphotos) {
-  //     await File(photo.name).delete();
-  //   }
-  //   passwords = [];
-
-  //   notifyListeners();
-  // }
-
   Future<void> deletePassword(Password password) async {
-    // await password.delete();
-    // File(password.path).delete();
 
     passwords.remove(password);
-    password.save();
+    await passwordService.deletePassword(password);
 
     notifyListeners();
   }
 
   Future<void> addPassword({
-    required Password photo,
+    required Password password,
   }) async {
     
-    passwords.add(photo);
+    passwords.add(password);
+    await passwordService.addPassword(password);
     
     notifyListeners();
   }
 
   Future<void> updatePassword({
-    required Password photo,
+    required Password password,
+    required oldPasswordIndex,
   }) async {
-    passwords[passwords.indexOf(photo)] = photo;
+    passwords[oldPasswordIndex] = password;
+    await passwordService.updatePassword(password, oldPasswordIndex);
     notifyListeners();
   }
 
   void passwordChangeFavoriteState(BuildContext context, Password password) {
     passwords[passwords.indexOf(password)].isFavorite =
         !passwords[passwords.indexOf(password)].isFavorite;
-    password.save();
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -80,9 +54,6 @@ class PasswordNotifier extends ChangeNotifier {
         duration: const Duration(milliseconds: 300),
       ),
     );
-
     notifyListeners();
   }
-
-
 }

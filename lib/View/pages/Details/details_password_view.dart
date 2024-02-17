@@ -31,12 +31,11 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
     super.initState();
     passwordProvider = Provider.of<PasswordNotifier>(context, listen: false);
 
-    // Check if a selected password was provided
     if (widget.password != null) {
       nameController.text = widget.password!.name;
       passwordController.text = widget.password!.password;
-      websiteController.text = widget.password!.website ?? '';
-      noteController.text = widget.password!.note ?? '';
+      websiteController.text = widget.password!.website;
+      noteController.text = widget.password!.note;
     }
   }
 
@@ -111,19 +110,21 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                 const Gap(20),
                 CostumButton(
                     onPressed: () {
-                      // update on this index or add password
                       if (widget.password != null) {
                         passwordProvider.updatePassword(
-                          photo: Password(
+                          password: Password(
                             name: nameController.text,
                             password: passwordController.text,
                             website: websiteController.text,
                             note: noteController.text,
                           ),
+                          oldPasswordIndex: passwordProvider
+                              .passwords
+                              .indexOf(widget.password!),
                         );
                       } else {
-                        passwordProvider.addPassword(
-                          photo: Password(
+                         passwordProvider.addPassword(
+                          password: Password(
                             name: nameController.text,
                             password: passwordController.text,
                             website: websiteController.text,

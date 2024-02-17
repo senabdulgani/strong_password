@@ -18,19 +18,18 @@ class Password {
   bool isFavorite;
 
   @HiveField(4)
-  String? website;
+  String website = '';
 
   @HiveField(5)
-  String? note;
+  String note = '';
 
   Password({
     required this.name,
     required this.password,
+    required this.website,
+    required this.note,
     this.createdAt,
     this.isFavorite = false,
-    this.website,
-    this.note,
   });
 
-  void save() {}
 }
