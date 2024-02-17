@@ -33,6 +33,9 @@ dependencies:
   credit_card_scanner: ^1.0.5
   local_auth: ^2.1.8
   provider: ^6.1.1
+  flutter_speed_dial: ^7.0.0
+  fluttertoast: ^8.2.4
+  font_awesome_flutter: ^10.7.0
 
 dev_dependencies:
   flutter_test:

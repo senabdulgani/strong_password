@@ -1,6 +1,10 @@
+import 'dart:ffi';
+
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:credit_card_scanner/credit_card_scanner.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:strong_password/View/component/search_bar.dart';
@@ -13,7 +17,6 @@ import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/models/card.dart';
 import 'package:strong_password/models/password.dart';
 import 'package:strong_password/provider/credit_card/credit_card_notifier.dart';
-import 'package:strong_password/provider/credit_card/credit_card_service.dart';
 import 'package:strong_password/provider/password/password_notifier.dart';
 
 class StrongPassword extends StatefulWidget {
@@ -25,7 +28,6 @@ class StrongPassword extends StatefulWidget {
 
 class _StrongPasswordState extends State<StrongPassword>
     with SingleTickerProviderStateMixin {
-  
   late final PasswordNotifier passwordProvider;
   late final CreditCardNotifier cardProvider;
 
@@ -44,7 +46,7 @@ class _StrongPasswordState extends State<StrongPassword>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: const Text('Passwords'),
         centerTitle: false,
@@ -102,43 +104,7 @@ class _StrongPasswordState extends State<StrongPassword>
         child: ListView(
           children: [
             SearchPassword(onSearch: onSearch),
-            // Row(
-            //   children: [
-            //     const Spacer(),
-            //     InkWell(
-            //       onTap: () {},
-            //       child: Container(
-            //         decoration: BoxDecoration(
-            //           borderRadius: BorderRadius.circular(8),
-            //           border: Border.all(
-            //             color: Colors.black,
-            //             width: 2,
-            //           ),
-            //           color: Colors.white,
-            //         ),
-            //         padding:
-            //             const EdgeInsets.all(8), // Adjust padding as needed
-            //         child: const Row(
-            //           mainAxisSize: MainAxisSize.min,
-            //           children: [
-            //             Text(
-            //               'By Name',
-            //               style: TextStyle(
-            //                 fontSize: 12,
-            //                 color: Colors.black,
-            //                 fontWeight: FontWeight.bold,
-            //               ),
-            //             ),
-            //             Icon(
-            //               Icons.arrow_drop_down,
-            //               color: Colors.black,
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
+            // const TopNavigation(),
             const SizedBox(height: 10),
             // todo Login list in my passwords
             if (context.watch<PasswordNotifier>().passwords.isNotEmpty)
@@ -156,8 +122,7 @@ class _StrongPasswordState extends State<StrongPassword>
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
                   Password password =
-                      context.watch<PasswordNotifier>().passwords[
-                          index];
+                      context.watch<PasswordNotifier>().passwords[index];
                   return GestureDetector(
                     child: Dismissible(
                       dismissThresholds: const {
@@ -180,9 +145,12 @@ class _StrongPasswordState extends State<StrongPassword>
                         passwordProvider.deletePassword(password);
                       },
                       child: ListTile(
+                        selectedTileColor: Colors.grey.shade100,
+                        leading: Icon(Icons.lock_person_outlined,
+                            color: Colors.grey.shade700),
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 8),
-                        tileColor: Colors.white,
+                        tileColor: Colors.grey.shade100,
                         title: Text(
                           context
                               .watch<PasswordNotifier>()
@@ -282,30 +250,30 @@ class _StrongPasswordState extends State<StrongPassword>
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
                   CreditCard card =
-                      context.watch<CreditCardNotifier>().cards[
-                          index];
+                      context.watch<CreditCardNotifier>().cards[index];
                   return ListTile(
-                    leading: Icon(Icons.credit_card, color: Colors.grey.shade700),
+                    leading:
+                        Icon(Icons.credit_card, color: Colors.grey.shade700),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    tileColor: Colors.white,
+                    tileColor: Colors.grey.shade100,
                     title: RichText(
                       text: TextSpan(
                         children: [
                           TextSpan(
                             text:
-                                '${context.watch<CreditCardNotifier>()
-                              .cards[index]
-                              .cardIssuer}  - **** ', // Boş olabilir.
+                                '${context.watch<CreditCardNotifier>().cards[index].cardIssuer}  - **** ', // Boş olabilir.
                             style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
-                            text: context.watch<CreditCardNotifier>()
-                              .cards[index]
-                              .cardNumber.toString().substring(12, 16),
-                              
+                            text: context
+                                .watch<CreditCardNotifier>()
+                                .cards[index]
+                                .cardNumber
+                                .toString()
+                                .substring(12, 16),
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -325,7 +293,8 @@ class _StrongPasswordState extends State<StrongPassword>
                               FlutterClipboard.copy(card.cardNumber).then(
                                   (value) => ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
-                                          content: Text('Copied to clipboard'))));
+                                          content:
+                                              Text('Copied to clipboard'))));
                             },
                             icon: const Icon(Icons.copy),
                             color: Colors.black,
@@ -358,110 +327,42 @@ class _StrongPasswordState extends State<StrongPassword>
                 },
               ),
             ),
-              
           ],
         ),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+      floatingActionButton: SpeedDial(
+        icon: Icons.add,
+        activeIcon: Icons.close,
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.grey.shade700,
+        overlayColor: Colors.grey.shade100,
+        overlayOpacity: 0.8,
+        spacing: 12,
+        spaceBetweenChildren: 12,
+        closeManually: true,
         children: [
-          FloatingActionButton(
-            heroTag: 'sample password',
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(56)),
-            ),
-            backgroundColor: AppColors.primaryColor,
-            onPressed: () {
-              setState(() {
-                passwordProvider.addPassword(
-                  password: Password(
-                    name: 'deneme adi',
-                    password: 'deneme123',
-                    website: 'deneme.com',
-                    note: 'deneme notu',
-                    isFavorite: false,
-                  ),
-                );
-              });
+          SpeedDialChild(
+            shape: const CircleBorder(),
+            child: const Icon(FontAwesomeIcons.key),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const PasswordDetailsView();
+              }));
             },
-            child: const Icon(Icons.flight_takeoff),
           ),
-          const Gap(10),
-          FloatingActionButton(
-            heroTag: 'sample card',
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(56)),
-            ),
-            backgroundColor: AppColors.primaryColor,
-            onPressed: () {
-              setState(() {
-                cardProvider.addCard(
-                  card: CreditCard(
-                    cardHolder: 'Abdulgani Şen',
-                    cardNumber: '1234567890127630',
-                    cardExpiry: 'deneme.com',
-                    cardIssuer: 'MasterCard',
-                    isFavorite: false,
-                  ),
-                );
-              });
+          SpeedDialChild(
+            shape: const CircleBorder(),
+            child: const Icon(FontAwesomeIcons.creditCard),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const PasswordGeneratorView();
+              }));
             },
-            child: const Icon(Icons.flight_outlined),
           ),
-          const Gap(10),
-          FloatingActionButton(
-            heroTag: 'scan',
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(56)),
-            ),
-            backgroundColor: AppColors.primaryColor,
-            onPressed: () {
-              // scan and then go to car page
-              scanCard();
-              // cardBox
-              //     .put(
-              //       _filteredCreditCard.length,
-              //       _cardDetails,
-              //     )
-              //     .then((value) => setState(() {}));
-              // _filteredCreditCard.add(_cardDetails as CreditCard);
-              // } else {
-
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) {
-              //       return CardHolderInfo(
-              //         cardDetails: _cardDetails,
-              //       );
-              //     },
-              //   ),
-              // );
-
-              // }
-              // Bu kendisi otomatik kamera izini alıyor.
-              // todo Kullanıcı izin vermezse ne olacak bu durumu yönet.
-            },
-            child: const Icon(Icons.credit_card),
-          ),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-            heroTag: 'add',
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(56)),
-            ),
-            backgroundColor: AppColors.primaryColor,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const PasswordDetailsView();
-                  },
-                ),
-              );
-            },
-            child: const Icon(Icons.add),
+          SpeedDialChild(
+            shape: const CircleBorder(),
+            child: const Icon(FontAwesomeIcons.link),
+            onTap: () {},
           ),
         ],
       ),
@@ -469,9 +370,6 @@ class _StrongPasswordState extends State<StrongPassword>
   }
 
   late bool _isUnlocked;
-
-  final List<Password> _filteredPasswords = [];
-  final List<CreditCard> _filteredCreditCard = [];
 
   CardDetails? _cardDetails;
   CardScanOptions scanOptions = const CardScanOptions(
@@ -505,23 +403,18 @@ class _StrongPasswordState extends State<StrongPassword>
     });
   }
 
+  late List<Password> _filteredPasswords = [];
+
   void onSearch(String query) {
     if (query.isEmpty) {
       setState(() {
-        // _filteredPasswords = boxPasswords.values.toList() as List<Password>;
-        // _filteredCreditCard = cardBox.values.toList() as List<CreditCard>;
-        // passwordProvider.getAllPasswords();
+        _filteredPasswords = passwordProvider.passwords;
       });
     } else {
       setState(() {
-        // _filteredPasswords.add(passwordProvider.passwords.firstWhere(
-        //     (password) =>
-        //         password.name.toLowerCase().contains(query.toLowerCase())));
-        
-        // _filteredCreditCard.add(cardProvider.cards.firstWhere(
-        //     (card) =>
-        //         card.cardHolder.toLowerCase().contains(query.toLowerCase())));
-        
+        _filteredPasswords.add(passwordProvider.passwords.firstWhere(
+            (password) =>
+                password.name.toLowerCase().contains(query.toLowerCase())));
       });
     }
   }
@@ -536,9 +429,83 @@ class _StrongPasswordState extends State<StrongPassword>
     await passwordProvider.getAllPasswords();
     setState(() {});
   }
+
   Future<void> getCards() async {
     await cardProvider.getAllCards();
     setState(() {});
+  }
+}
+
+class TopNavigation extends StatefulWidget {
+  const TopNavigation({
+    super.key,
+  });
+
+  @override
+  State<TopNavigation> createState() => _TopNavigationState();
+}
+
+class _TopNavigationState extends State<TopNavigation> {
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      children: [
+        CostumSelectButton(
+          text: 'Logins',
+        ),
+        Gap(10),
+        CostumSelectButton(
+          text: 'Cards',
+        ),
+        Gap(10),
+        CostumSelectButton(
+          text: 'Favorites',
+        ),
+      ],
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class CostumSelectButton extends StatefulWidget {
+  final String text;
+
+  const CostumSelectButton({
+    super.key,
+    required this.text,
+  });
+
+  @override
+  State<CostumSelectButton> createState() => _CostumSelectButtonState();
+}
+
+class _CostumSelectButtonState extends State<CostumSelectButton> {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: () {},
+        style: ButtonStyle(
+          elevation: MaterialStateProperty.all(4),
+          backgroundColor: MaterialStateProperty.all(Colors.grey.shade200),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          side: MaterialStateProperty.all(
+            const BorderSide(
+              color: Colors.black,
+              width: 1,
+            ),
+          ),
+        ),
+        child: Text(
+          widget.text,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ));
   }
 }
 
