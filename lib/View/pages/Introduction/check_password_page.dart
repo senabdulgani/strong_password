@@ -46,6 +46,8 @@ class _CheckPasswordState extends State<CheckPassword> {
 
   @override
   Widget build(BuildContext context) {
+    _authenticate(true);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -68,23 +70,33 @@ class _CheckPasswordState extends State<CheckPassword> {
             const SizedBox(height: 30),
             CostumPasswordTextField(
               controller: _passwordController,
-              isVisible: isVisible,
+              isVisible: !isVisible,
               labelText: 'Password',
             ),
-            const SizedBox(height: 30),
-            CostumButton(
-              onPressed: () {
-                isUserSecure().then((value) {
-                  if (value) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const StrongPassword()));
-                  }
-                });
-              },
-              buttonText: 'Log In',
-            ),
+            const SizedBox(height: 20),
+            if (_supportState)
+              // CostumButton(
+              //   onPressed: () {
+              //     _authenticate();
+              //   },
+              //   buttonText: 'Use Fingerprint',
+              //   color: Colors.green,
+              //   withImage: true,
+              // ),
+              // const SizedBox(height: 20),
+              CostumButton(
+                onPressed: () {
+                  isUserSecure().then((value) {
+                    if (value) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const StrongPassword()));
+                    }
+                  });
+                },
+                buttonText: 'Log In',
+              ),
             GestureDetector(
                 onTap: () {
                   // todo: I forgot my password process.
@@ -94,50 +106,59 @@ class _CheckPasswordState extends State<CheckPassword> {
                     color: Colors.transparent,
                     child: Text('Forgot Password?',
                         style: Theme.of(context).textTheme.bodySmall))),
-            const Gap(60),
-            if(_supportState)
-            CostumButton(
-              onPressed: () {
-                _authenticate();
+            Gap(MediaQuery.of(context).size.height * 0.24),
+            GestureDetector(
+              onTap: () {
+                _authenticate(false);
               },
-              buttonText: 'Authenticate',
-              color: Colors.blue,
+              child: Container(
+                padding: const EdgeInsets.all(30),
+                color: Colors.transparent,
+                child: Transform.scale(
+                  scale: 3.2,
+                  child: Image.asset(
+                    'assets/fingerprint.png',
+                    color: Colors.green,
+                    width: 30,
+                    height: 30,
+                  ),
+                ),
+              ),
             ),
-            const Gap(12),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _authenticate() async {
-   
-      final authenticated = await auth.authenticate(
-        localizedReason: 'Please authenticate to show your passwords.',
-        options: const AuthenticationOptions(
-          stickyAuth: false,
-          biometricOnly: true,
-        ),
-      );
+  Future<void> _authenticate(bool automaticRequest) async {
+    final authenticated = await auth.authenticate(
+      localizedReason: 'Please authenticate to show your passwords.',
+      options: const AuthenticationOptions(
+        stickyAuth: false,
+        biometricOnly: true,
+      ),
+    );
 
-      if (authenticated) {
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const StrongPassword()));
-      } else {
+    if (authenticated) {
+      // ignore: use_build_context_synchronously
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const StrongPassword()));
+    } else {
+      if (automaticRequest == false) {
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Authentication failed'),
           ),
         );
+      } else {
+        return;
       }
-    
+    }
 
     if (!mounted) {
       return;
     }
   }
-
-  
 }

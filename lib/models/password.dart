@@ -1,5 +1,6 @@
 // ignore: depend_on_referenced_packages
 import 'package:hive/hive.dart';
+import 'package:strong_password/reaction_button.dart';
 
 part 'password.g.dart';
 
@@ -30,6 +31,7 @@ class Password {
     required this.note,
     this.createdAt,
     this.isFavorite = false,
+
   });
 
 }
