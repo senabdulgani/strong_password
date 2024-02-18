@@ -197,7 +197,6 @@ class _StrongPasswordState extends State<StrongPassword>
                               ),
                               PopUpMenuButton(
                                 firstItem: () {
-                                  // edit password
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -210,9 +209,7 @@ class _StrongPasswordState extends State<StrongPassword>
                                   );
                                 },
                                 secondItem: () {
-                                  // setState(() {
                                   passwordProvider.deletePassword(password);
-                                  // });
                                 },
                               ),
                             ],
@@ -253,6 +250,7 @@ class _StrongPasswordState extends State<StrongPassword>
                   CreditCard card =
                       context.watch<CreditCardNotifier>().cards[index];
                   return ListTile(
+                    onLongPress: () {},
                     leading:
                         Icon(Icons.credit_card, color: Colors.grey.shade700),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 8),
@@ -292,8 +290,9 @@ class _StrongPasswordState extends State<StrongPassword>
                           IconButton(
                             onPressed: () {
                               FlutterClipboard.copy(card.cardNumber).then(
-                                  (value) => FlutterClipboard.copy(card.cardNumber).then(
-                                      (value) => Fluttertoast.showToast(
+                                  (value) => FlutterClipboard.copy(
+                                          card.cardNumber)
+                                      .then((value) => Fluttertoast.showToast(
                                           msg: 'Copied to clipboard',
                                           toastLength: Toast.LENGTH_SHORT,
                                           gravity: ToastGravity.BOTTOM,
@@ -345,7 +344,7 @@ class _StrongPasswordState extends State<StrongPassword>
         overlayOpacity: 0.8,
         spacing: 12,
         spaceBetweenChildren: 12,
-        closeManually: true,
+        closeDialOnPop: true,
         children: [
           SpeedDialChild(
             shape: const CircleBorder(),
@@ -378,35 +377,20 @@ class _StrongPasswordState extends State<StrongPassword>
   late bool _isUnlocked;
 
   CardDetails? _cardDetails;
-  CardScanOptions scanOptions = const CardScanOptions(
-    scanCardHolderName: true,
-    scanExpiryDate: true,
-    enableLuhnCheck: false,
-    cardScannerTimeOut: 1,
-    initialScansToDrop: 1,
-    enableDebugLogs: true,
-    validCardsToScanBeforeFinishingScan: 5,
-    possibleCardHolderNamePositions: [
-      CardHolderNameScanPosition.belowCardNumber,
-    ],
-  );
 
   Future<void> scanCard() async {
-    final CardDetails? cardDetails =
-        await CardScanner.scanCard(scanOptions: scanOptions);
-    if (!mounted || cardDetails == null) {
-      return;
-    }
-    setState(() {
-      _cardDetails = cardDetails;
-      CreditCard creditCard = CreditCard(
-        cardHolder: _cardDetails!.cardHolderName,
+    _cardDetails = await CardScanner.scanCard();
+    if (_cardDetails != null) {
+      CreditCard card = CreditCard(
         cardNumber: _cardDetails!.cardNumber,
-        cardExpiry: _cardDetails!.expiryDate,
+        cardHolder: _cardDetails!.cardHolderName,
         cardIssuer: _cardDetails!.cardIssuer,
+        cardExpiry: _cardDetails!.expiryDate,
       );
-      cardProvider.addCard(card: creditCard);
-    });
+      cardProvider.addCard(
+        card: card,
+      );
+    }
   }
 
   late List<Password> _filteredPasswords = [];

@@ -19,6 +19,8 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
   bool isNumbers = true;
   bool isSymbols = true;
 
+  List<String> passwordHistory = [];
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -47,11 +49,14 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
             ),
           ),
           actions: [
+            const Text('7/10'),
             Container(
               padding: const EdgeInsets.all(12),
               color: Colors.transparent,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  _showPasswordHistoryDialog();
+                },
                 icon: const Icon(
                   Icons.history,
                   size: 30,
@@ -161,6 +166,7 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
                                   isSymbols);
                               setState(() {
                                 generatedPassword = newPass;
+                                _addToPasswordHistory(newPass);
                               });
                             },
                             iconData: Icons.refresh,
@@ -181,6 +187,40 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
           ),
         ),
       ),
+    );
+  }
+  void _addToPasswordHistory(String newPassword) {
+    passwordHistory.add(newPassword);
+    if (passwordHistory.length > 10) {
+      passwordHistory.removeAt(0);
+    }
+  }
+
+  void _showPasswordHistoryDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Password History'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: passwordHistory
+                  .map<Widget>((password) => ListTile(
+                        title: Text(password),
+                      ))
+                  .toList(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
