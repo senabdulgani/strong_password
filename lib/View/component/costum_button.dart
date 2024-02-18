@@ -28,7 +28,7 @@ class CostumButton extends StatelessWidget {
           buttonText,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 16, // Adjust font size as needed
+            fontSize: 16,
           ),
         ),
       ),

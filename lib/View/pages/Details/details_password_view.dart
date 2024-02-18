@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:strong_password/View/component/costum_button.dart';
+import 'package:strong_password/common/feature/basic_helper.dart';
 import 'package:strong_password/models/password.dart';
 import 'package:strong_password/provider/password/password_notifier.dart';
 
@@ -26,6 +28,9 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
   final TextEditingController websiteController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
 
+  bool isPasswordVisible = false;
+  bool isDirty = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +42,30 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
       websiteController.text = widget.password!.website;
       noteController.text = widget.password!.note;
     }
+
+    nameController.addListener(() {
+      setState(() {
+        isDirty = true;
+      });
+    });
+
+    passwordController.addListener(() {
+      setState(() {
+        isDirty = true;
+      });
+    });
+
+    websiteController.addListener(() {
+      setState(() {
+        isDirty = true;
+      });
+    });
+
+    noteController.addListener(() {
+      setState(() {
+        isDirty = true;
+      });
+    });
   }
 
   @override
@@ -67,27 +96,37 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                 Gap(MediaQuery.of(context).size.height * 0.01),
                 TextFieldWithIcon(
                   labelText: 'Password label',
-                  iconData: Icons.add_a_photo,
+                  iconData: Icons.label,
                   controller: nameController,
                 ),
                 const Gap(12),
-                // const FieldInfoArea(
-                //   infoHeader: 'Password Strength',
-                //   infoBody: 'This is a strong password',
-                // ),
                 TextFieldWithIcon(
                   labelText: 'Enter password',
-                  iconData: Icons.security,
-                  isObscure: true,
+                  iconData: isPasswordVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                  isObscure: isPasswordVisible,
                   controller: passwordController,
+                  firstIconAction: () {
+                    setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    });
+                  },
+                  secondIcon: FontAwesomeIcons.g,
+                  secondIconAction: () {
+                    // generate password
+                    String newPass = BasicHelpers.generatePassword(
+                        12, true, true, true);
+                    passwordController.text = newPass;
+                  },
                 ),
                 const Gap(12),
-                // TextFieldWithIcon(
-                //   labelText: 'Enter username (optional)',
-                //   iconData: Icons.person,
-                //   controller: usernameController!,
-                // ),
-                // const Gap(12),
+                const FieldInfoArea(
+                  infoHeader: 'Generate Password',
+                  infoBody:
+                      'You can generate a strong password to click G button.',
+                ),
+                const Gap(12),
                 TextFieldWithIcon(
                   labelText: 'Website (optional)',
                   iconData: Icons.web,
@@ -109,33 +148,34 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                 ),
                 const Gap(20),
                 CostumButton(
-                    onPressed: () {
-                      if (widget.password != null) {
-                        passwordProvider.updatePassword(
-                          password: Password(
-                            name: nameController.text,
-                            password: passwordController.text,
-                            website: websiteController.text,
-                            note: noteController.text,
-                          ),
-                          oldPasswordIndex: passwordProvider
-                              .passwords
-                              .indexOf(widget.password!),
-                        );
-                      } else {
-                         passwordProvider.addPassword(
-                          password: Password(
-                            name: nameController.text,
-                            password: passwordController.text,
-                            website: websiteController.text,
-                            note: noteController.text,
-                          ),
-                        );
-                      }
-                      Navigator.pop(context);
-                      debugPrint('Password saved');
-                    },
-                    buttonText: 'Save'),
+                  onPressed: () {
+                    if (widget.password != null) {
+                      passwordProvider.updatePassword(
+                        password: Password(
+                          name: nameController.text,
+                          password: passwordController.text,
+                          website: websiteController.text,
+                          note: noteController.text,
+                        ),
+                        oldPasswordIndex: passwordProvider.passwords
+                            .indexOf(widget.password!),
+                      );
+                    } else {
+                      passwordProvider.addPassword(
+                        password: Password(
+                          name: nameController.text,
+                          password: passwordController.text,
+                          website: websiteController.text,
+                          note: noteController.text,
+                        ),
+                      );
+                    }
+                    Navigator.pop(context);
+                    debugPrint('Password saved');
+                  },
+                  buttonText: 'Save',
+                  color: isDirty ? Colors.black : Colors.grey,
+                ),
               ],
             ),
           ),
@@ -157,51 +197,59 @@ class FieldInfoArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(infoHeader,
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Colors.grey.shade600,
-                      fontSize: 16,
-                    )),
-            const Gap(6),
-            Icon(
-              Icons.info,
-              color: Colors.grey.shade700,
-              size: 16,
-            )
-          ],
-        ),
-        Row(
-          children: [
-            SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Text(
-                  infoBody,
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
-                )),
-          ],
-        )
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(infoHeader,
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.grey.shade600,
+                        fontSize: 16,
+                      )),
+              const Gap(6),
+              Icon(
+                Icons.info,
+                color: Colors.grey.shade700,
+                size: 16,
+              )
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                  child: Text(
+                infoBody,
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+              )),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
 
 class TextFieldWithIcon extends StatelessWidget {
+  final String labelText;
+  final IconData iconData;
+  final IconData? secondIcon;
+  final bool isObscure;
+  final TextEditingController? controller;
+  final Function()? firstIconAction;
+  final Function()? secondIconAction;
+
   const TextFieldWithIcon({
     super.key,
     required this.labelText,
     required this.iconData,
+    this.secondIcon,
     required this.controller,
     this.isObscure = false,
+    this.firstIconAction,
+    this.secondIconAction,
   });
-
-  final String labelText;
-  final IconData iconData;
-  final bool isObscure;
-  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -234,13 +282,27 @@ class TextFieldWithIcon extends StatelessWidget {
             ),
           ),
         ),
+        if (secondIcon != null)
+          Flexible(
+            flex: 2,
+            child: GestureDetector(
+              onTap: secondIconAction,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                color: Colors.transparent,
+                child: Icon(secondIcon, size: 30, color: Colors.green.shade500),
+              ),
+            ),
+          ),
         Flexible(
           flex: 2,
-          child: Container(
-            width: 50,
-            padding: const EdgeInsets.all(8),
-            color: Colors.transparent,
-            child: Icon(iconData, size: 30),
+          child: GestureDetector(
+            onTap: firstIconAction,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              color: Colors.transparent,
+              child: Icon(iconData, size: 30),
+            ),
           ),
         ),
       ],

@@ -1,9 +1,8 @@
-import 'dart:ffi';
-
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:credit_card_scanner/credit_card_scanner.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +12,6 @@ import 'package:strong_password/View/pages/Details/details_password_view.dart';
 import 'package:strong_password/View/pages/Feature/password_generator.dart';
 import 'package:strong_password/View/pages/Introduction/check_password_page.dart';
 import 'package:strong_password/View/pages/Settings/settings_view.dart';
-import 'package:strong_password/common/color_constants.dart';
 import 'package:strong_password/models/card.dart';
 import 'package:strong_password/models/password.dart';
 import 'package:strong_password/provider/credit_card/credit_card_notifier.dart';
@@ -184,12 +182,15 @@ class _StrongPasswordState extends State<StrongPassword>
                               const Spacer(),
                               IconButton(
                                 onPressed: () {
-                                  // copy password
                                   FlutterClipboard.copy(password.password).then(
-                                      (value) => ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                              content: Text(
-                                                  'Copied to clipboard'))));
+                                      (value) => Fluttertoast.showToast(
+                                          msg: 'Copied to clipboard',
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.grey.shade700,
+                                          textColor: Colors.white,
+                                          fontSize: 16));
                                 },
                                 icon: const Icon(Icons.copy),
                                 color: Colors.black,
@@ -291,10 +292,15 @@ class _StrongPasswordState extends State<StrongPassword>
                           IconButton(
                             onPressed: () {
                               FlutterClipboard.copy(card.cardNumber).then(
-                                  (value) => ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                          content:
-                                              Text('Copied to clipboard'))));
+                                  (value) => FlutterClipboard.copy(card.cardNumber).then(
+                                      (value) => Fluttertoast.showToast(
+                                          msg: 'Copied to clipboard',
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.grey.shade700,
+                                          textColor: Colors.white,
+                                          fontSize: 16)));
                             },
                             icon: const Icon(Icons.copy),
                             color: Colors.black,
@@ -316,7 +322,7 @@ class _StrongPasswordState extends State<StrongPassword>
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return CardHolderInfo(
+                            return CardDetailInfo(
                               card: card,
                             );
                           },
@@ -354,15 +360,15 @@ class _StrongPasswordState extends State<StrongPassword>
             shape: const CircleBorder(),
             child: const Icon(FontAwesomeIcons.creditCard),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const PasswordGeneratorView();
-              }));
+              scanCard();
             },
           ),
           SpeedDialChild(
             shape: const CircleBorder(),
             child: const Icon(FontAwesomeIcons.link),
-            onTap: () {},
+            onTap: () {
+              // Share app ama henüz yapmadım.
+            },
           ),
         ],
       ),

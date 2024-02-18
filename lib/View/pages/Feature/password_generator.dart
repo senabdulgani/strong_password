@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:strong_password/common/color_constants.dart';
+import 'package:strong_password/common/feature/basic_helper.dart';
 
 // ignore: must_be_immutable
 class PasswordGeneratorView extends StatefulWidget {
@@ -82,7 +82,6 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
                   Tab(
                     text: 'Charachters',
                   ),
-                  
                 ],
               ),
               // todo Şimdilik burada tabbar kullanımına gerek yok.
@@ -155,8 +154,11 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
                           ),
                           CircleButtonLarge(
                             onPressed: () {
-                              String newPass = generatePassword(lengthValue,
-                                  isUpperCase, isNumbers, isSymbols);
+                              String newPass = BasicHelpers.generatePassword(
+                                  lengthValue,
+                                  isUpperCase,
+                                  isNumbers,
+                                  isSymbols);
                               setState(() {
                                 generatedPassword = newPass;
                               });
@@ -180,42 +182,6 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
         ),
       ),
     );
-  }
-
-  String generatePassword(int characterLength, bool includeUpperCase,
-      bool includeNumbers, bool includeSymbols) {
-    // Tanımlanan karakter setleri
-    final List<String> upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    final List<String> lowerCaseChars = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    final List<String> numbers = '0123456789'.split('');
-    final List<String> symbols = '~!@#\$%^&*()_-+={[}]|:;"<,>.?/'.split('');
-
-    // Karakterlerin hepsini içerecek olan karakter seti
-    List<String> allCharacters = List<String>.from(lowerCaseChars);
-
-    // Büyük harfleri ekle
-    if (includeUpperCase) {
-      allCharacters.addAll(upperCaseChars);
-    }
-
-    // Sayıları ekle
-    if (includeNumbers) {
-      allCharacters.addAll(numbers);
-    }
-
-    // Sembolleri ekle
-    if (includeSymbols) {
-      allCharacters.addAll(symbols);
-    }
-
-    // Rastgele karaterler seçerek şifre oluştur
-    String password = '';
-    final random = Random();
-    for (int i = 0; i < characterLength; i++) {
-      password += allCharacters[random.nextInt(allCharacters.length)];
-    }
-
-    return password;
   }
 }
 
@@ -249,6 +215,60 @@ class PasswordArea extends StatefulWidget {
 class _PasswordAreaState extends State<PasswordArea> {
   @override
   Widget build(BuildContext context) {
+    String? generatedPassword = widget.generatedPassword;
+    if (generatedPassword == null || generatedPassword.isEmpty) {
+      return Container(
+        height: MediaQuery.of(context).size.height * 0.3,
+        width: MediaQuery.of(context).size.width,
+        color: Colors.grey.shade200,
+      );
+    }
+
+    List<Widget> passwordCharacters = [];
+    for (int i = 0; i < generatedPassword.length; i++) {
+      Widget characterWidget;
+      String character = generatedPassword[i];
+
+      if (RegExp(r'[0-9]').hasMatch(character)) {
+        characterWidget = Text(
+          character,
+          style: const TextStyle(
+            color: Colors.blue, // Blue for digits
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      } else if (RegExp(r'[A-Z]').hasMatch(character)) {
+        characterWidget = Text(
+          character,
+          style: const TextStyle(
+            color: Colors.green, // Purple for capital letters
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      } else if (RegExp(r'[!@\$%*]').hasMatch(character)) {
+        characterWidget = Text(
+          character,
+          style: const TextStyle(
+            color: Colors.red, // Yellow for symbols
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      } else {
+        characterWidget = Text(
+          character,
+          style: const TextStyle(
+            color: Colors.black, // Black for lowercase letters
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      }
+      passwordCharacters.add(characterWidget);
+    }
+
     return Stack(
       children: [
         Container(
@@ -259,40 +279,35 @@ class _PasswordAreaState extends State<PasswordArea> {
         Positioned(
           top: 40,
           left: 40,
-          child: Text(
-            widget.generatedPassword ?? '',
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Row(
+            children: passwordCharacters,
           ),
         ),
-        widget.generatedPassword == null
-            ? const Positioned(
-                bottom: 20,
-                left: 20,
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.health_and_safety,
-                      color: Color.fromARGB(255, 101, 182, 103),
-                      size: 30,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'Strong',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 101, 182, 103),
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+        if(widget.generatedPassword!.isNotEmpty)
+        const Positioned(
+          bottom: 20,
+          left: 20,
+          child: Row(
+            children: [
+              Icon(
+                Icons.health_and_safety,
+                color: Color.fromARGB(255, 101, 182, 103),
+                size: 30,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                'Strong',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 101, 182, 103),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
-              )
-            : const SizedBox(),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

@@ -4,8 +4,8 @@ import 'package:strong_password/View/pages/Feature/password_generator.dart';
 import 'package:strong_password/models/card.dart';
 
 // ignore: must_be_immutable
-class CardHolderInfo extends StatefulWidget {
-  const CardHolderInfo({
+class CardDetailInfo extends StatefulWidget {
+  const CardDetailInfo({
     super.key,
     required this.card,
     this.cardLabel,
@@ -16,10 +16,10 @@ class CardHolderInfo extends StatefulWidget {
 
 
   @override
-  State<CardHolderInfo> createState() => _CardHolderInfoState();
+  State<CardDetailInfo> createState() => _CardDetailInfoState();
 }
 
-class _CardHolderInfoState extends State<CardHolderInfo> {
+class _CardDetailInfoState extends State<CardDetailInfo> {
   bool isVisible = true;
 
   @override
@@ -69,8 +69,8 @@ class _CardHolderInfoState extends State<CardHolderInfo> {
                     left: 20,
                     child: Text(
                       isVisible
-                          ? widget.card.cardNumber
-                          : '**** ${widget.card.cardNumber.substring(12, 16)}',
+                          ? '${widget.card.cardNumber.substring(0,4)} ${widget.card.cardNumber.substring(4,8)} ${widget.card.cardNumber.substring(8,12)} ${widget.card.cardNumber.substring(12,16)}'
+                          : '**** **** **** ${widget.card.cardNumber.substring(12, 16)}',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w500,
@@ -121,14 +121,14 @@ class _CardHolderInfoState extends State<CardHolderInfo> {
                 fieldName: 'Card Number: ',
                 text: isVisible
                     ? widget.card.cardNumber
-                    : '**** ${widget.card.cardNumber.substring(12, 16)}',
+                    : '**** **** **** ${widget.card.cardNumber.substring(12, 16)}',
               ),
               const Gap(10),
               CardPageInfoCard(
                   fieldName: 'Card Holder: ',
                   text: isVisible
                       ? widget.card.cardHolder
-                      : '*** ***'),
+                      : '****** ****'),
               const Gap(10),
               CardPageInfoCard(
                   fieldName: 'Expiry Date: ',
@@ -137,7 +137,7 @@ class _CardHolderInfoState extends State<CardHolderInfo> {
                       : '**/**'),
               const Gap(10),
               CardPageInfoCard(
-                  fieldName: 'CVV: ', text: isVisible ? '***' : '404'),
+                  fieldName: 'CVV: ', text: isVisible ? '404' : '***'),
               const Gap(20),
               const CostumDivider(),
               const Gap(10),
