@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:strong_password/View/component/search_bar.dart';
 import 'package:strong_password/View/pages/Details/card_holder_info.dart';
 import 'package:strong_password/View/pages/Details/details_password_view.dart';
+import 'package:strong_password/View/pages/Details/edit_card_detail.dart';
 import 'package:strong_password/View/pages/Feature/password_generator.dart';
 import 'package:strong_password/View/pages/Introduction/check_password_page.dart';
 import 'package:strong_password/View/pages/Settings/settings_view.dart';
@@ -272,7 +273,7 @@ class _StrongPasswordState extends State<StrongPassword>
                                 .cards[index]
                                 .cardNumber
                                 .toString()
-                                .substring(12, 16),
+                                .substring(12, 16), // todo 16 haneli olmalı.
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -358,8 +359,16 @@ class _StrongPasswordState extends State<StrongPassword>
           SpeedDialChild(
             shape: const CircleBorder(),
             child: const Icon(FontAwesomeIcons.creditCard),
-            onTap: () {
-              scanCard();
+            onTap: () async {
+              await scanCard();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return EditCardDetails(
+                    
+                  );
+                }),
+              );
             },
           ),
           SpeedDialChild(

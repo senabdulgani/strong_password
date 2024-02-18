@@ -115,8 +115,8 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                   secondIcon: FontAwesomeIcons.g,
                   secondIconAction: () {
                     // generate password
-                    String newPass = BasicHelpers.generatePassword(
-                        12, true, true, true);
+                    String newPass =
+                        BasicHelpers.generatePassword(12, true, true, true);
                     passwordController.text = newPass;
                   },
                 ),
@@ -133,18 +133,9 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                   controller: websiteController,
                 ),
                 const Gap(36),
-                TextFormField(
-                  controller: noteController,
-                  minLines: 4,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    labelText: 'Note Something',
-                  ),
+                CostumNoteField(
+                  noteController: noteController,
+                  text: 'Note Something',
                 ),
                 const Gap(20),
                 CostumButton(
@@ -180,6 +171,34 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CostumNoteField extends StatelessWidget {
+  const CostumNoteField({
+    super.key,
+    required this.noteController,
+    required this.text,
+  });
+
+  final TextEditingController noteController;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: noteController,
+      minLines: 4,
+      maxLines: null,
+      keyboardType: TextInputType.multiline,
+      decoration: InputDecoration(
+        alignLabelWithHint: true,
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        labelText: text,
       ),
     );
   }
@@ -258,29 +277,7 @@ class TextFieldWithIcon extends StatelessWidget {
       children: [
         Flexible(
           flex: 8,
-          child: TextField(
-            cursorColor: Colors.black,
-            onEditingComplete: () {},
-            textInputAction: TextInputAction.done,
-            controller: controller,
-            obscureText: isObscure,
-            decoration: InputDecoration(
-              floatingLabelStyle: const TextStyle(
-                color: Colors.black,
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.black,
-                ),
-              ),
-              disabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.black,
-                ),
-              ),
-              labelText: labelText,
-            ),
-          ),
+          child: CostumTextField(controller: controller, isObscure: isObscure, labelText: labelText),
         ),
         if (secondIcon != null)
           Flexible(
@@ -306,6 +303,46 @@ class TextFieldWithIcon extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class CostumTextField extends StatelessWidget {
+  const CostumTextField({
+    super.key,
+    required this.controller,
+    this.isObscure = false,
+    required this.labelText,
+  });
+
+  final TextEditingController? controller;
+  final bool isObscure;
+  final String labelText;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      cursorColor: Colors.black,
+      onEditingComplete: () {},
+      textInputAction: TextInputAction.done,
+      controller: controller,
+      obscureText: isObscure,
+      decoration: InputDecoration(
+        floatingLabelStyle: const TextStyle(
+          color: Colors.black,
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.black,
+          ),
+        ),
+        disabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.black,
+          ),
+        ),
+        labelText: labelText,
+      ),
     );
   }
 }

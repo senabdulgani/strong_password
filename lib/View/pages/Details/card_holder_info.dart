@@ -3,6 +3,8 @@ import 'package:gap/gap.dart';
 import 'package:strong_password/View/pages/Feature/password_generator.dart';
 import 'package:strong_password/models/card.dart';
 
+import 'edit_card_detail.dart';
+
 // ignore: must_be_immutable
 class CardDetailInfo extends StatefulWidget {
   const CardDetailInfo({
@@ -14,12 +16,12 @@ class CardDetailInfo extends StatefulWidget {
   final CreditCard card;
   final String? cardLabel;
 
-
   @override
   State<CardDetailInfo> createState() => _CardDetailInfoState();
 }
 
 class _CardDetailInfoState extends State<CardDetailInfo> {
+
   bool isVisible = true;
 
   @override
@@ -29,6 +31,35 @@ class _CardDetailInfoState extends State<CardDetailInfo> {
         title: Text(widget.cardLabel ?? 'Card Info'),
         backgroundColor: Colors.transparent,
         actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditCardDetails(
+                    cardHolder: widget.card.cardHolder,
+                    cardNumber: widget.card.cardNumber,
+                    cardExpiry: widget.card.cardExpiry,
+                    cardCvv: widget.card.cardCvv,
+                    card: widget.card,
+                    isUpdate: true,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              color: Colors.transparent,
+              child: const Text(
+                'Edit',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
           IconButton(
             onPressed: () {
               setState(() {
@@ -47,6 +78,7 @@ class _CardDetailInfoState extends State<CardDetailInfo> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.04,
               ),
+              
               Stack(
                 children: [
                   Container(
@@ -69,7 +101,7 @@ class _CardDetailInfoState extends State<CardDetailInfo> {
                     left: 20,
                     child: Text(
                       isVisible
-                          ? '${widget.card.cardNumber.substring(0,4)} ${widget.card.cardNumber.substring(4,8)} ${widget.card.cardNumber.substring(8,12)} ${widget.card.cardNumber.substring(12,16)}'
+                          ? '${widget.card.cardNumber.substring(0, 4)} ${widget.card.cardNumber.substring(4, 8)} ${widget.card.cardNumber.substring(8, 12)} ${widget.card.cardNumber.substring(12, 16)}'
                           : '**** **** **** ${widget.card.cardNumber.substring(12, 16)}',
                       style: const TextStyle(
                         fontSize: 24,
@@ -81,9 +113,7 @@ class _CardDetailInfoState extends State<CardDetailInfo> {
                     bottom: 20,
                     left: 20,
                     child: Text(
-                      isVisible
-                          ? widget.card.cardHolder
-                          : '*** ***',
+                      isVisible ? widget.card.cardHolder : '*** ***',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -94,9 +124,7 @@ class _CardDetailInfoState extends State<CardDetailInfo> {
                     bottom: 20,
                     right: 20,
                     child: Text(
-                      isVisible
-                          ? widget.card.cardExpiry
-                          : '**/**',
+                      isVisible ? widget.card.cardExpiry : '**/**',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -119,22 +147,19 @@ class _CardDetailInfoState extends State<CardDetailInfo> {
               ),
               CardPageInfoCard(
                 fieldName: 'Card Number: ',
-                text: isVisible
+                text:
+                isVisible
                     ? widget.card.cardNumber
                     : '**** **** **** ${widget.card.cardNumber.substring(12, 16)}',
               ),
               const Gap(10),
               CardPageInfoCard(
                   fieldName: 'Card Holder: ',
-                  text: isVisible
-                      ? widget.card.cardHolder
-                      : '****** ****'),
+                  text: isVisible ? widget.card.cardHolder : '****** ****'),
               const Gap(10),
               CardPageInfoCard(
                   fieldName: 'Expiry Date: ',
-                  text: isVisible
-                      ? widget.card.cardExpiry
-                      : '**/**'),
+                  text: isVisible ? widget.card.cardExpiry : '**/**'),
               const Gap(10),
               CardPageInfoCard(
                   fieldName: 'CVV: ', text: isVisible ? '404' : '***'),
@@ -145,9 +170,7 @@ class _CardDetailInfoState extends State<CardDetailInfo> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   CircleButtonLarge(
-                      onPressed: () {
-                        
-                      },
+                      onPressed: () {},
                       iconData: Icons.delete,
                       text: 'Delete Card',
                       iconColor: Colors.red),

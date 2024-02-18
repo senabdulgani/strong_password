@@ -46,7 +46,7 @@ class _CheckPasswordState extends State<CheckPassword> {
 
   @override
   Widget build(BuildContext context) {
-    _authenticate(true);
+    // _authenticate(true); // Todo: Burası açılacak. her setState'de çalışıyor.
 
     return Scaffold(
       body: Padding(
