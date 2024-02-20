@@ -31,7 +31,7 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
             'Password Generator',
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
-          centerTitle: false,
+          centerTitle: true,
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
           toolbarHeight: 70,
@@ -48,22 +48,22 @@ class _PasswordGeneratorViewState extends State<PasswordGeneratorView> {
               ),
             ),
           ),
-          actions: [
-            const Text('7/10'),
-            Container(
-              padding: const EdgeInsets.all(12),
-              color: Colors.transparent,
-              child: IconButton(
-                onPressed: () {
-                  _showPasswordHistoryDialog();
-                },
-                icon: const Icon(
-                  Icons.history,
-                  size: 30,
-                  color: Colors.black,
-                ),
-              ),
-            ),
+          actions: const [
+            // const Text('7/10'),
+            // Container(
+            //   padding: const EdgeInsets.all(12),
+            //   color: Colors.transparent,
+            //   child: IconButton(
+            //     onPressed: () {
+            //       _showPasswordHistoryDialog();
+            //     },
+            //     icon: const Icon(
+            //       Icons.history,
+            //       size: 30,
+            //       color: Colors.black,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         body: SingleChildScrollView(

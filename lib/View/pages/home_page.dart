@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:strong_password/View/component/search_bar.dart';
 import 'package:strong_password/View/pages/Details/card_holder_info.dart';
 import 'package:strong_password/View/pages/Details/details_password_view.dart';
 import 'package:strong_password/View/pages/Details/edit_card_detail.dart';
@@ -47,29 +46,19 @@ class _StrongPasswordState extends State<StrongPassword>
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: const Text('Passwords'),
-        centerTitle: false,
+        title: const Text('All Passwords', style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10.0),
-            child: IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const PasswordGeneratorView();
-                }));
-              },
-              icon: const Icon(Icons.password),
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const SettingsPage();
-              }));
-            },
-            icon: const Icon(Icons.menu),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(right: 10.0),
+          //   child: IconButton(
+          //     onPressed: () {
+
+          //     },
+          //     icon: const Icon(Icons.password),
+          //   ),
+          // ),
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 200),
             crossFadeState: _isUnlocked
@@ -96,13 +85,22 @@ class _StrongPasswordState extends State<StrongPassword>
               icon: const Icon(Icons.lock, color: Colors.red),
             ),
           ),
+          IconButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return const SettingsPage();
+                    }));
+                  },
+                  icon: const Icon(Icons.menu),
+                ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: ListView(
           children: [
-            SearchPassword(onSearch: onSearch),
+            // SearchPassword(onSearch: onSearch),
             // const TopNavigation(),
             const SizedBox(height: 10),
             // todo Login list in my passwords
@@ -273,7 +271,7 @@ class _StrongPasswordState extends State<StrongPassword>
                                 .cards[index]
                                 .cardNumber
                                 .toString(),
-                                // .substring(12, 16), // todo 16 haneli olmalı.
+                            // .substring(12, 16), // todo 16 haneli olmalı.
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -359,23 +357,23 @@ class _StrongPasswordState extends State<StrongPassword>
           SpeedDialChild(
             shape: const CircleBorder(),
             child: const Icon(FontAwesomeIcons.creditCard),
-            onTap: () async {
-              await scanCard();
+            onTap: () {
+              scanCard();
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return EditCardDetails(
-                    
-                  );
+                  return EditCardDetails();
                 }),
               );
             },
           ),
           SpeedDialChild(
             shape: const CircleBorder(),
-            child: const Icon(FontAwesomeIcons.link),
+            child: const Icon(FontAwesomeIcons.g),
             onTap: () {
-              // Share app ama henüz yapmadım.
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const PasswordGeneratorView();
+                }));
             },
           ),
         ],

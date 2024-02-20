@@ -138,6 +138,7 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                           password: passwordController.text,
                           website: websiteController.text,
                           note: noteController.text,
+                          passwordHistory: widget.password!.passwordHistory,
                         ),
                         oldPasswordIndex: passwordProvider.passwords
                             .indexOf(widget.password!),
