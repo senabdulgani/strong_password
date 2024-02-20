@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:strong_password/View/component/costum_button.dart';
+import 'package:strong_password/View/pages/Details/details_password_view.dart';
 import 'package:strong_password/View/pages/home_page.dart';
 
 // ignore: must_be_immutable
@@ -20,9 +22,13 @@ class _DetectPasswordState extends State<DetectPassword> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  TextEditingController hintController = TextEditingController();
+  
   String _detectedPassword = '';
+  String _detectedHint = '';
 
   bool isVisible = false;
+  
 
   void setFirstLoginFalse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -33,20 +39,16 @@ class _DetectPasswordState extends State<DetectPassword> {
   void _detectPassword() async {
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
+    String hintPassword = hintController.text;
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (password.isEmpty || confirmPassword.isEmpty) {
-      setState(() {
-        _detectedPassword = 'Please fill password fields!';
-      });
-    } else if (password != confirmPassword) {
-      setState(() {
-        _detectedPassword = 'Passwords do not match!';
-      });
-    } else if (password == confirmPassword) {
+    if (password == confirmPassword || hintPassword.isNotEmpty) {
       setState(() {
         _detectedPassword = password;
         prefs.setString('appPassword', _detectedPassword);
+        _detectedHint = hintPassword;
+        prefs.setString('hintPassword', _detectedHint);
+        debugPrint('Password: $_detectedPassword and Hint: $_detectedHint');
       });
     }
   }
@@ -77,6 +79,14 @@ class _DetectPasswordState extends State<DetectPassword> {
                 const Spacer()
               ],
             ),
+            Text('The master password is the key to your account. It is the login password for your account.',
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.left,
+                    ),
             const SizedBox(height: 20),
             CostumPasswordTextField(
               controller: _passwordController,
@@ -91,11 +101,24 @@ class _DetectPasswordState extends State<DetectPassword> {
                   ? 'Confirm New Password'
                   : 'Confirm Password',
             ),
+            const Gap(24),
+            CostumNoteField(
+            noteController: hintController,
+             text: 'Add password hint'),
+             const Gap(10),
+            Text('If you forget your password, you can use your hint password to remember it.',
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.left,
+                    ),
             const SizedBox(height: 20),
             CostumButton(
               onPressed: () {
                 _detectPassword();
-                setFirstLoginFalse();
+                setFirstLoginFalse(); // todo Care clean code
                 Navigator.push(
                     context,
                     MaterialPageRoute(

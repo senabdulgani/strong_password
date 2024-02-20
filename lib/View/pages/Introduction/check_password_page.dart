@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:strong_password/View/component/costum_button.dart';
 import 'package:strong_password/View/pages/Introduction/detect_password_view.dart';
+import 'package:strong_password/View/pages/Introduction/hint_master_pass.dart';
 import 'package:strong_password/View/pages/home_page.dart';
 
 class CheckPassword extends StatefulWidget {
@@ -57,7 +57,7 @@ class _CheckPasswordState extends State<CheckPassword> {
             Row(
               children: [
                 Text(
-                  'Hello...',
+                  'Welcome\nBack...',
                   textAlign: TextAlign.left,
                   style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                         fontWeight: FontWeight.bold,
@@ -99,7 +99,10 @@ class _CheckPasswordState extends State<CheckPassword> {
               ),
             GestureDetector(
                 onTap: () {
-                  // todo: I forgot my password process.
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HintPassword()));
                 },
                 child: Container(
                     padding: const EdgeInsets.all(10),

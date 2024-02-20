@@ -272,8 +272,8 @@ class _StrongPasswordState extends State<StrongPassword>
                                 .watch<CreditCardNotifier>()
                                 .cards[index]
                                 .cardNumber
-                                .toString()
-                                .substring(12, 16), // todo 16 haneli olmalı.
+                                .toString(),
+                                // .substring(12, 16), // todo 16 haneli olmalı.
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
