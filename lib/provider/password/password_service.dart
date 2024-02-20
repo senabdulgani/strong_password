@@ -27,4 +27,13 @@ class PasswordService {
     final box = await _box;
     return box.values.toList();
   }
+
+  Future<List<String>> getAllPasswordHistory() async {
+    final box = await _box;
+    List<String> passwordHistory = [];
+    for (var password in box.values) {
+      passwordHistory.addAll(password.passwordHistory);
+    }
+    return passwordHistory;
+  }
 }

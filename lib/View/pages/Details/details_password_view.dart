@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:strong_password/View/component/costum_button.dart';
 import 'package:strong_password/common/feature/basic_helper.dart';
+import 'package:strong_password/View/pages/Feature/history_password.dart';
 import 'package:strong_password/models/password.dart';
 import 'package:strong_password/provider/password/password_notifier.dart';
 
@@ -42,30 +43,6 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
       websiteController.text = widget.password!.website;
       noteController.text = widget.password!.note;
     }
-
-    nameController.addListener(() {
-      setState(() {
-        isDirty = true;
-      });
-    });
-
-    passwordController.addListener(() {
-      setState(() {
-        isDirty = true;
-      });
-    });
-
-    websiteController.addListener(() {
-      setState(() {
-        isDirty = true;
-      });
-    });
-
-    noteController.addListener(() {
-      setState(() {
-        isDirty = true;
-      });
-    });
   }
 
   @override
@@ -75,6 +52,20 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
         title: const Text('Password'),
         backgroundColor: Colors.transparent,
         actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return HistoryPass(
+                  password: widget.password!,
+                );
+              }));
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Colors.transparent,
+              child: const Icon(Icons.history, color: Colors.black, size: 30),
+            ),
+          ),
           GestureDetector(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -150,7 +141,7 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                         ),
                         oldPasswordIndex: passwordProvider.passwords
                             .indexOf(widget.password!),
-                      );
+                      );                      
                     } else {
                       passwordProvider.addPassword(
                         password: Password(
@@ -158,6 +149,7 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                           password: passwordController.text,
                           website: websiteController.text,
                           note: noteController.text,
+                          passwordHistory: [passwordController.text],
                         ),
                       );
                     }
@@ -277,7 +269,10 @@ class TextFieldWithIcon extends StatelessWidget {
       children: [
         Flexible(
           flex: 8,
-          child: CostumTextField(controller: controller, isObscure: isObscure, labelText: labelText),
+          child: CostumTextField(
+              controller: controller,
+              isObscure: isObscure,
+              labelText: labelText),
         ),
         if (secondIcon != null)
           Flexible(

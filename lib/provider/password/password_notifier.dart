@@ -24,23 +24,27 @@ class PasswordNotifier extends ChangeNotifier {
   }
 
   Future<void> addPassword({
-    required Password password,
-  }) async {
-    
-    passwords.add(password);
-    await passwordService.addPassword(password);
-    
-    notifyListeners();
-  }
+  required Password password,
+}) async {
+  password.passwordHistory.add(password.password);
+  passwords.add(password);
+  await passwordService.addPassword(password);
+  notifyListeners();
+}
 
-  Future<void> updatePassword({
-    required Password password,
-    required oldPasswordIndex,
-  }) async {
-    passwords[oldPasswordIndex] = password;
-    await passwordService.updatePassword(password, oldPasswordIndex);
-    notifyListeners();
+Future<void> updatePassword({
+  required Password password,
+  required int oldPasswordIndex,
+}) async {
+  final oldPassword = passwords[oldPasswordIndex];
+  if (oldPassword.password != password.password) {
+    password.passwordHistory = List.from(oldPassword.passwordHistory); 
+    password.passwordHistory.add(password.password);
   }
+  passwords[oldPasswordIndex] = password;
+  await passwordService.updatePassword(password, oldPasswordIndex);
+  notifyListeners();
+}
 
   void passwordChangeFavoriteState(BuildContext context, Password password) {
     passwords[passwords.indexOf(password)].isFavorite =

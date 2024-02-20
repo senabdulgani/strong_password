@@ -23,6 +23,9 @@ class Password {
   @HiveField(5)
   String note = '';
 
+  @HiveField(6)
+  List<String> passwordHistory = [];
+
   Password({
     required this.name,
     required this.password,
@@ -30,7 +33,7 @@ class Password {
     required this.note,
     this.createdAt,
     this.isFavorite = false,
-
+    this.passwordHistory = const [],
   });
 
 }
