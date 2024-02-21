@@ -18,6 +18,14 @@ class PasswordService {
     await box.put(oldPasswordIndex, password);
   }
 
+  // Add item to password history
+  Future<void> addPasswordHistory(Password password, String newPassword) async {
+    final box = await _box;
+    final index = box.values.toList().indexOf(password);
+    password.passwordHistory.add(newPassword);
+    await box.putAt(index, password);
+  }
+
   Future<void> deletePassword(Password password) async {
     final box = await _box;
     await box.deleteAt(box.values.toList().indexOf(password));
@@ -28,12 +36,12 @@ class PasswordService {
     return box.values.toList();
   }
 
-  Future<List<String>> getAllPasswordHistory() async {
-    final box = await _box;
-    List<String> passwordHistory = [];
-    for (var password in box.values) {
-      passwordHistory.addAll(password.passwordHistory);
-    }
-    return passwordHistory;
-  }
+  // Future<List<String>> getAllPasswordHistory() async {
+  //   final box = await _box;
+  //   List<String> passwordHistory = [];
+  //   for (var password in box.values) {
+  //     passwordHistory.addAll(password.passwordHistory);
+  //   }
+  //   return passwordHistory;
+  // }
 }

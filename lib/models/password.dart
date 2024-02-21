@@ -24,7 +24,7 @@ class Password {
   String note = '';
 
   @HiveField(6)
-  List<String> passwordHistory = [];
+  List<String> passwordHistory;
 
   Password({
     required this.name,
@@ -33,7 +33,7 @@ class Password {
     required this.note,
     this.createdAt,
     this.isFavorite = false,
-    this.passwordHistory = const [],
-  });
+    List<String>? passwordHistory,
+  }): passwordHistory = passwordHistory ?? [];
 
 }

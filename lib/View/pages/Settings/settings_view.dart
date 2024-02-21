@@ -14,21 +14,17 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text('Settings', style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),),
         centerTitle: false,
         backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: Column(
           children: [
-            // CostumSettingItem(
-            //   iconData: Icons.color_lens_outlined,
-            //   text: 'Appearance',
-            // ),
-            // CostumDivider(),
+            const CostumDivider(),
             CostumSettingItem(
               iconData: Icons.shield_outlined,
-              text: 'Security',
+              text: 'Master Password',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -39,16 +35,6 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             const CostumDivider(),
-            // CostumSettingItem(
-            //   iconData: Icons.language,
-            //   text: 'Language',
-            // ),
-            // CostumDivider(),
-            // CostumSettingItem(
-            //   iconData: Icons.import_export_sharp,
-            //   text: 'Export - Import',
-            // ),
-            // CostumDivider(),
             const CostumSettingItem(
               iconData: Icons.info_outline,
               text: 'About',

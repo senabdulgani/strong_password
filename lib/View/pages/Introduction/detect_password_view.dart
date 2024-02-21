@@ -17,18 +17,93 @@ class DetectPassword extends StatefulWidget {
   @override
   State<DetectPassword> createState() => _DetectPasswordState();
 }
-
 class _DetectPasswordState extends State<DetectPassword> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.075),
+            Row(
+              children: [
+                widget.isUpdate == true
+                    ? const Header(
+                        text: 'Change\nMaster\nPassword...',
+                      )
+                    : const Header(
+                        text: 'Detect\nMaster\nPassword...',
+                      ),
+                const Spacer()
+              ],
+            ),
+            Text(
+              'The master password is the key to your account. It is the login password for your account.',
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+              textAlign: TextAlign.left,
+            ),
+            const SizedBox(height: 20),
+            CostumPasswordTextField(
+              controller: _passwordController,
+              isVisible: isVisible,
+              labelText: widget.isUpdate == true ? 'New Password' : 'Password',
+            ),
+            const SizedBox(height: 12),
+            CostumPasswordTextField(
+              controller: _confirmPasswordController,
+              isVisible: isVisible,
+              labelText: widget.isUpdate == true
+                  ? 'Confirm New Password'
+                  : 'Confirm Password',
+            ),
+            const Gap(24),
+            CostumNoteField(
+                noteController: hintController, text: 'Add password hint'),
+            const Gap(10),
+            Text(
+              'If you forget your password, you can use your hint password to remember it.',
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+              textAlign: TextAlign.left,
+            ),
+            const SizedBox(height: 20),
+            CostumButton(
+              onPressed: () {
+                _detectPassword();
+                setFirstLoginFalse(); // todo Care clean code
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const StrongPassword()));
+              },
+              buttonText:
+                  widget.isUpdate == true ? 'Change Password' : 'Sign In',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   TextEditingController hintController = TextEditingController();
-  
+
   String _detectedPassword = '';
   String _detectedHint = '';
 
   bool isVisible = false;
-  
 
   void setFirstLoginFalse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -51,86 +126,6 @@ class _DetectPasswordState extends State<DetectPassword> {
         debugPrint('Password: $_detectedPassword and Hint: $_detectedHint');
       });
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // Belli koşullar sağlanamazsa buradan ileri gidememeli.
-      //   },
-      //   child: const Icon(Icons.arrow_forward),
-      // ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-            Row(
-              children: [
-                widget.isUpdate == true
-                    ? const Header(
-                        text: 'Change\nMaster\nPassword...',
-                      )
-                    : const Header(
-                        text: 'Detect\nMaster\nPassword...',
-                      ),
-                const Spacer()
-              ],
-            ),
-            Text('The master password is the key to your account. It is the login password for your account.',
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                    textAlign: TextAlign.left,
-                    ),
-            const SizedBox(height: 20),
-            CostumPasswordTextField(
-              controller: _passwordController,
-              isVisible: isVisible,
-              labelText: widget.isUpdate == true ? 'New Password' : 'Password',
-            ),
-            const SizedBox(height: 12),
-            CostumPasswordTextField(
-              controller: _confirmPasswordController,
-              isVisible: isVisible,
-              labelText: widget.isUpdate == true
-                  ? 'Confirm New Password'
-                  : 'Confirm Password',
-            ),
-            const Gap(24),
-            CostumNoteField(
-            noteController: hintController,
-             text: 'Add password hint'),
-             const Gap(10),
-            Text('If you forget your password, you can use your hint password to remember it.',
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                    textAlign: TextAlign.left,
-                    ),
-            const SizedBox(height: 20),
-            CostumButton(
-              onPressed: () {
-                _detectPassword();
-                setFirstLoginFalse(); // todo Care clean code
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const StrongPassword()));
-              },
-              buttonText:
-                  widget.isUpdate == true ? 'Change Password' : 'Sign In',
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -169,7 +164,8 @@ class CostumPasswordTextField extends StatefulWidget {
   final String labelText;
 
   @override
-  State<CostumPasswordTextField> createState() => _CostumPasswordTextFieldState();
+  State<CostumPasswordTextField> createState() =>
+      _CostumPasswordTextFieldState();
 }
 
 class _CostumPasswordTextFieldState extends State<CostumPasswordTextField> {

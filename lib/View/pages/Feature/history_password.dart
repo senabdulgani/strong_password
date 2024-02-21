@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:strong_password/models/password.dart';
 import 'package:strong_password/provider/password/password_notifier.dart';
@@ -60,14 +59,14 @@ class _HistoryPassState extends State<HistoryPass> {
           GestureDetector(
             onTap: () {
               setState(() {
-                passwordProvider.deletePasswordHistory(widget.password, );
+                widget.password.passwordHistory.clear();
               });
               Fluttertoast.showToast(
                 msg: 'Password history cleared',
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
                 timeInSecForIosWeb: 1,
-                backgroundColor: Colors.grey,
+                backgroundColor: Colors.black,
                 textColor: Colors.white,
                 fontSize: 16.0,
               );

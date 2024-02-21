@@ -88,7 +88,7 @@ class _CheckPasswordState extends State<CheckPassword> {
                 onPressed: () {
                   isUserSecure().then((value) {
                     if (value) {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const StrongPassword()));

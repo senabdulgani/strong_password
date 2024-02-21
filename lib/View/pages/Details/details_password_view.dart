@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,6 @@ import 'package:strong_password/View/pages/Feature/history_password.dart';
 import 'package:strong_password/models/password.dart';
 import 'package:strong_password/provider/password/password_notifier.dart';
 
-// ignore: must_be_immutable
 class PasswordDetailsView extends StatefulWidget {
   final Password? password;
 
@@ -30,7 +30,6 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
   final TextEditingController noteController = TextEditingController();
 
   bool isPasswordVisible = false;
-  bool isDirty = false;
 
   @override
   void initState() {
@@ -45,20 +44,34 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Password'),
+        title: Text(
+            widget.password != null ? widget.password!.name : 'New Password',
+            style: const TextStyle(fontWeight: FontWeight.w500)),
         backgroundColor: Colors.transparent,
         actions: [
           GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return HistoryPass(
-                  password: widget.password!,
-                );
-              }));
+              widget.password != null
+                  ? Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
+                      return HistoryPass(
+                        password: widget.password!,
+                      );
+                    }))
+                  : Fluttertoast.showToast(
+                      msg: 'Password history cleared',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -66,7 +79,8 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
               child: const Icon(Icons.history, color: Colors.black, size: 30),
             ),
           ),
-          GestureDetector(
+          InkWell(
+            onTap: () {},
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               color: Colors.transparent,
@@ -105,7 +119,6 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                   },
                   secondIcon: FontAwesomeIcons.g,
                   secondIconAction: () {
-                    // generate password
                     String newPass =
                         BasicHelpers.generatePassword(12, true, true, true);
                     passwordController.text = newPass;
@@ -131,34 +144,10 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
                 const Gap(20),
                 CostumButton(
                   onPressed: () {
-                    if (widget.password != null) {
-                      passwordProvider.updatePassword(
-                        password: Password(
-                          name: nameController.text,
-                          password: passwordController.text,
-                          website: websiteController.text,
-                          note: noteController.text,
-                          passwordHistory: widget.password!.passwordHistory,
-                        ),
-                        oldPasswordIndex: passwordProvider.passwords
-                            .indexOf(widget.password!),
-                      );                      
-                    } else {
-                      passwordProvider.addPassword(
-                        password: Password(
-                          name: nameController.text,
-                          password: passwordController.text,
-                          website: websiteController.text,
-                          note: noteController.text,
-                          passwordHistory: [passwordController.text],
-                        ),
-                      );
-                    }
-                    Navigator.pop(context);
-                    debugPrint('Password saved');
+                    savePassword();
                   },
                   buttonText: 'Save',
-                  color: isDirty ? Colors.black : Colors.grey,
+                  color: Colors.black,
                 ),
               ],
             ),
@@ -166,6 +155,53 @@ class _PasswordDetailsViewState extends State<PasswordDetailsView> {
         ),
       ),
     );
+  }
+
+  void savePassword() {
+    if (nameController.text.isEmpty || passwordController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Name and password cannot be empty.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      if (widget.password != null) {
+        passwordProvider.updatePassword(
+          password: Password(
+            name: nameController.text,
+            password: passwordController.text,
+            website: websiteController.text,
+            note: noteController.text,
+            passwordHistory: widget.password!.passwordHistory,
+          ),
+          oldPasswordIndex:
+              passwordProvider.passwords.indexOf(widget.password!),
+        );
+      } else {
+        passwordProvider.addPassword(
+          password: Password(
+            name: nameController.text,
+            password: passwordController.text,
+            website: websiteController.text,
+            note: noteController.text,
+            passwordHistory: [passwordController.text],
+          ),
+        );
+      }
+      Navigator.pop(context);
+    }
   }
 }
 
@@ -209,36 +245,28 @@ class FieldInfoArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(infoHeader,
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        color: Colors.grey.shade600,
-                        fontSize: 16,
-                      )),
-              const Gap(6),
-              Icon(
-                Icons.info,
-                color: Colors.grey.shade700,
-                size: 16,
-              )
-            ],
-          ),
-          Row(
-            children: [
-              SizedBox(
-                  child: Text(
-                infoBody,
-                style: const TextStyle(color: Colors.grey, fontSize: 14),
-              )),
-            ],
-          )
-        ],
-      ),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(infoHeader,
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      color: Colors.grey.shade600,
+                      fontSize: 16,
+                    )),
+            const Gap(6),
+            Icon(
+              Icons.info,
+              color: Colors.grey.shade700,
+              size: 16,
+            )
+          ],
+        ),
+        Text(
+          infoBody,
+          style: const TextStyle(color: Colors.grey, fontSize: 14),
+        )
+      ],
     );
   }
 }
