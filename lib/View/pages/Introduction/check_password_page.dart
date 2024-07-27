@@ -51,84 +51,67 @@ class _CheckPasswordState extends State<CheckPassword> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-            Row(
-              children: [
-                Text(
-                  'Welcome\nBack...',
-                  textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 56,
-                      ),
-                ),
-                const Spacer(),
-              ],
-            ),
-            const SizedBox(height: 30),
-            CostumPasswordTextField(
-              controller: _passwordController,
-              isVisible: !isVisible,
-              labelText: 'Password',
-            ),
-            const SizedBox(height: 20),
-            if (_supportState)
-              // CostumButton(
-              //   onPressed: () {
-              //     _authenticate();
-              //   },
-              //   buttonText: 'Use Fingerprint',
-              //   color: Colors.green,
-              //   withImage: true,
-              // ),
-              // const SizedBox(height: 20),
-              CostumButton(
-                onPressed: () {
-                  isUserSecure().then((value) {
-                    if (value) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const StrongPassword()));
-                    }
-                  });
-                },
-                buttonText: 'Log In',
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+              Row(
+                children: [
+                  Text(
+                    'Welcome\nBack...',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 56,
+                        ),
+                  ),
+                  const Spacer(),
+                ],
               ),
-            GestureDetector(
+              const SizedBox(height: 30),
+              CostumPasswordTextField(
+                controller: _passwordController,
+                isVisible: !isVisible,
+                labelText: 'Password',
+              ),
+              const SizedBox(height: 20),
+              if (_supportState)
+                CostumButton(
+                  onPressed: () {
+                    isUserSecure().then((value) {
+                      if (value) {
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StrongPassword()));
+                      }
+                    });
+                  },
+                  buttonText: 'Log In',
+                ),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HintPassword()));
+                  },
+                  child: Container(padding: const EdgeInsets.all(10), color: Colors.transparent, child: Text('Forgot Password?', style: Theme.of(context).textTheme.bodySmall))),
+              Gap(MediaQuery.of(context).size.height * 0.24),
+              GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HintPassword()));
+                  _authenticate(false);
                 },
                 child: Container(
-                    padding: const EdgeInsets.all(10),
-                    color: Colors.transparent,
-                    child: Text('Forgot Password?',
-                        style: Theme.of(context).textTheme.bodySmall))),
-            Gap(MediaQuery.of(context).size.height * 0.24),
-            GestureDetector(
-              onTap: () {
-                _authenticate(false);
-              },
-              child: Container(
-                padding: const EdgeInsets.all(30),
-                color: Colors.transparent,
-                child: Transform.scale(
-                  scale: 3.2,
-                  child: Image.asset(
-                    'assets/fingerprint.png',
-                    color: Colors.green,
-                    width: 30,
-                    height: 30,
+                  padding: const EdgeInsets.all(30),
+                  color: Colors.transparent,
+                  child: Transform.scale(
+                    scale: 3.2,
+                    child: Image.asset(
+                      'assets/fingerprint.png',
+                      color: Colors.green,
+                      width: 30,
+                      height: 30,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -145,8 +128,7 @@ class _CheckPasswordState extends State<CheckPassword> {
 
     if (authenticated) {
       // ignore: use_build_context_synchronously
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const StrongPassword()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const StrongPassword()));
     } else {
       if (automaticRequest == false) {
         // ignore: use_build_context_synchronously
